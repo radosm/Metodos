@@ -1,0 +1,7 @@
+Clase TFloat - Changelog
+------------------------
+
+Versión 1.01:
+-------------
+- Se agregó un constructor por defecto el cual setea la precisión en 52 bits y el valor en 0
+- Se agregó un operador de asignación que recibe un double y toma el valor del mismo recortando a la precisión establecida previamente en el TFloat. Esto resuelve un problema que surgía al asignar un double a un TFloat.
