@@ -19,9 +19,7 @@ TFloat g;
 // actualiza la velocidad y la altura
 
 TFloat proximoImpacto(Datos& d, int& iter){
-  TFloat (*p)(const Datos&,TFloat);
-  p=&posicion;
-  TFloat t1 = biseccion(p,d,iter);
+  TFloat t1 = biseccion(&posicion,d,iter);
   TFloat menos_uno_tf=TFloat(-1,pr);
   d.v0=menos_uno_tf*d.fr*velocidad(d,t1);
   d.h=TFloat(0.0,pr); // la altura despues del impacto es cero

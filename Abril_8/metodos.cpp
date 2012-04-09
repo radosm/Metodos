@@ -59,7 +59,7 @@ TFloat newton(TFloat (*f)(const Datos&,TFloat),TFloat (*f1)(const Datos&,TFloat)
 
   iter=1;
 
-  TFloat x0 = t - f(d, t) / f(d, t);
+  TFloat x0 = t ;
   TFloat x1 = x0 - f(d, x0) / f1(d, x0);
 
   while(errorRelativo(x0,x1).dbl() > tolerancia.dbl() && iter < max_iter){

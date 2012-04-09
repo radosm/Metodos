@@ -91,7 +91,7 @@ TFloat aceleracion(const Datos& d, TFloat t){
 // energia mecanica
 TFloat energiaMecanica(const Datos& d, TFloat t){
   TFloat dos_tf=TFloat(2.0,pr);
-  return posicion(d, t) + velocidad(d,t)*velocidad(d,t) / dos_tf;
+  return posicion(d, t)*g + velocidad(d,t)*velocidad(d,t) / dos_tf;
 }
 
 TFloat biseccion(const Datos& d, int iteraciones){
