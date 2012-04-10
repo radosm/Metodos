@@ -3,10 +3,7 @@
 #include "assert.h"
 
 extern size_t pr;
-extern TFloat tolerancia;
-extern int max_iter;
 extern TFloat g;
-
 
 TFloat errorRelativo(TFloat a, TFloat b) {
     if (a.dbl() > b.dbl()){
@@ -16,7 +13,7 @@ TFloat errorRelativo(TFloat a, TFloat b) {
     }
 }
 
-TFloat biseccion_n(TFloat (*f)(const Datos&,TFloat),const Datos& d, int iter,int& iter_hechas){
+TFloat biseccion_generico(TFloat (*f)(const Datos&,TFloat),const Datos& d, TFloat tolerancia, int max_iter, int iter, int& iter_hechas){
 
   TFloat a=TFloat(0.0,pr);
   TFloat dos_tf=TFloat(2.0,pr);
@@ -47,20 +44,20 @@ TFloat biseccion_n(TFloat (*f)(const Datos&,TFloat),const Datos& d, int iter,int
 
 TFloat biseccion_n(TFloat (*f)(const Datos&,TFloat),const Datos& d, int iter){
   int ih;
-  return biseccion_n(f,d,iter,ih);
+  return biseccion_generico(f,d,0,-1,iter,ih);
 }
 
 
-TFloat biseccion(TFloat (*f)(const Datos&,TFloat),const Datos& d, int& iter){
-  return biseccion_n(f,d,max_iter,iter);
+TFloat biseccion(TFloat (*f)(const Datos&,TFloat),const Datos& d,TFloat tolerancia, int max_iter, int& iter){
+  return biseccion_generico(f,d,tolerancia,max_iter,max_iter,iter);
 }
 
-TFloat newton(TFloat (*f)(const Datos&,TFloat),TFloat (*f1)(const Datos&,TFloat),const Datos& d, TFloat t, int& iter){
+TFloat newton(TFloat (*f)(const Datos&,TFloat),TFloat (*f1)(const Datos&,TFloat),const Datos& d,TFloat tolerancia,int max_iter, TFloat t, int& iter){
 
   iter=1;
 
   TFloat x0 = t ;
-  TFloat x1 = x0 - f(d, x0) / f1(d, x0);
+  TFloat x1 = x0 - f(d, x0) / f1(d, x0);  // 1ra iteracion
 
   while(errorRelativo(x0,x1).dbl() > tolerancia.dbl() && iter < max_iter){
     x0 = x1;
