@@ -4,6 +4,7 @@ CXXFLAGS=
 LDFLAGS=
 
 ALL=newton biseccion
+
 all: $(ALL)
 
 newton: newton.o TFloat.o fisica.o metodos.o
