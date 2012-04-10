@@ -49,14 +49,14 @@ int main(int argc, char* argv[]){
   datos.cr=TFloat(atof(argv[7]),pr);
   datos.fr=TFloat(atof(argv[8]),pr);
 
-  TFloat t1=biseccion_n(&posicion,datos,1);
+  TFloat t1=biseccion_n(&posicion,datos,10);
   t1=proximoImpacto(datos, tolerancia, max_iter,t1, iter1);
 
   TFloat t_h_max=biseccion_n(&velocidad,datos,1);
   t_h_max=newton(&velocidad,&aceleracion,datos, tolerancia, max_iter,t_h_max, iter2);
   TFloat h_max=posicion(datos,t_h_max);
 
-  TFloat t2=biseccion_n(&posicion,datos,1);
+  TFloat t2=biseccion_n(&posicion,datos,10);
   t2=proximoImpacto(datos,tolerancia, max_iter,t2,iter3);
 
   printf("%d %10.20f %d %10.20f %d %10.20f %d %10.20f %d\n",pr,tolerancia.dbl(),max_iter,t1.dbl(),iter1,h_max.dbl(),iter2,(t1+t2).dbl(),iter3);

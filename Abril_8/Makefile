@@ -1,11 +1,10 @@
 export LC_ALL=C
-##CXXFLAGS= -Wall -pedantic -g -ggdb
-##LDFLAGS= -lpthread
 
 CXXFLAGS=
 LDFLAGS=
 
-all: newton biseccion
+ALL=newton biseccion
+all: $(ALL)
 
 newton: newton.o TFloat.o fisica.o metodos.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
@@ -20,4 +19,4 @@ TFloat.o: TFloat.cpp TFloat.h
 fisica.o: fisica.cpp fisica.h TFloat.h
 
 clean:
-	rm -f *.o newton biseccion
+	rm -f *.o $(ALL)
