@@ -1,41 +1,13 @@
 typeset -i i
-i=1
+
+echo
+echo 'pr tolerancia             max_i 1er imp                it alt max                 it 2do imp                it'
+echo -- ---------------------- ----- ---------------------- -- ----------------------- -- ---------------------- --
+i=52
 while [ $i -lt 53 ]
 do
 #             precision  tolerancia  max_iter  altura  velocidad  masa  cr  fr
 #             ---------  ----------  --------  ------  ---------  ----  --  --
-  ./newton    $i         0.00001     10000     1000    10         2     0   1
-  i=$i+1
-done
-i=1
-while [ $i -lt 53 ]
-do
-#             precision  tolerancia  max_iter  altura  velocidad  masa  cr  fr
-#             ---------  ----------  --------  ------  ---------  ----  --  --
-  ./newton    $i         0.000001    10000     1000    10         2     0   1
-  i=$i+1
-done
-i=1
-while [ $i -lt 53 ]
-do
-#             precision  tolerancia  max_iter  altura  velocidad  masa  cr  fr
-#             ---------  ----------  --------  ------  ---------  ----  --  --
-  ./newton    $i         0.0000001   10000     1000    10         2     0   1
-  i=$i+1
-done
-i=1
-while [ $i -lt 53 ]
-do
-#             precision  tolerancia  max_iter  altura  velocidad  masa  cr  fr
-#             ---------  ----------  --------  ------  ---------  ----  --  --
-  ./newton    $i         0.00000001  10000     1000    10         2     0   1
-  i=$i+1
-done
-i=1
-while [ $i -lt 53 ]
-do
-#             precision  tolerancia   max_iter  altura  velocidad  masa  cr  fr
-#             ---------  -----------  --------  ------  ---------  ----  --  --
-  ./newton    $i         0.000000001  10000     1000    10         2     0   1
+  ./newton    $i         0.00000000001     100    1000   500         2     0   1
   i=$i+1
 done
