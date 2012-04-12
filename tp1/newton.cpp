@@ -54,7 +54,6 @@ int main(int argc, char* argv[]){
 // primer impacto
   TFloat t1=biseccion_n(&posicion,datos,1);
   t1=newton(&posicion,&velocidad,datos,tolerancia,max_iter,t1, iter1);
-
   printf("log pr=%d t1=%10.20f posicion(t1)=%10.20f iter=%d\n",pr,t1.dbl(),posicion(datos,t1).dbl(),iter1);
 
   incremento=t1.dbl()/200.0;
