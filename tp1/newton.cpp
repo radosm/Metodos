@@ -53,7 +53,8 @@ int main(int argc, char* argv[]){
 // primer impacto
   TFloat t1=biseccion_n(&posicion,datos,1);
   t1=newton(&posicion,&velocidad,datos,tolerancia,max_iter,t1, iter1);
-  //printf("posicion(t1)=%10.20f\n",posicion(datos,t1).dbl());
+
+  printf("log t1=%10.20f posicion(t1)=%10.20f iter=%d\n",t1.dbl(),posicion(datos,t1).dbl(),iter1);
 
   for (TFloat i=TFloat(0,pr); i.dbl()<t1.dbl(); i=i+t1/TFloat(1000,pr)){
     printf("emt1 %10.20f %10.20f\n", i.dbl(), energiaMecanica(datos,i).dbl());
@@ -68,11 +69,17 @@ int main(int argc, char* argv[]){
   // altura maxima
   TFloat t_h_max=biseccion_n(&velocidad,datos,1);
   t_h_max=newton(&velocidad,&aceleracion,datos,tolerancia,max_iter,t_h_max,iter2);
+
+  printf("log t_h_max=%10.20f velocidad(t_h_max)=%10.20f iter=%d\n",t_h_max.dbl(),velocidad(datos,t_h_max).dbl(),iter2);
+
   TFloat h_max=posicion(datos,t_h_max);
 
   // segundo impacto
   TFloat t2=biseccion_n(&posicion,datos,1);
   t2=newton(&posicion,&velocidad,datos,tolerancia,max_iter,t2,iter3);
+
+  printf("log t2=%10.20f posicion(t2)=%10.20f iter=%d\n",t2.dbl(),posicion(datos,t2).dbl(),iter3);
+
   for (TFloat i=TFloat(0,pr); i.dbl()<t2.dbl(); i=i+t2/TFloat(1000,pr)){
     printf("emt2 %10.20f %10.20f\n", (t1+i).dbl(), energiaMecanica(datos,i).dbl());
   }

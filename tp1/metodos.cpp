@@ -37,9 +37,10 @@ TFloat biseccion_generico(TFloat (*f)(const Datos&,TFloat),const Datos& d, TFloa
   TFloat a=TFloat(0.0,pr);
   TFloat dos_tf=TFloat(2.0,pr);
   TFloat cero_tf=TFloat(0.0,pr);
+  TFloat tolAbs=TFloat(0.0000000001,pr);
   TFloat x0=TFloat(0,pr);
   TFloat x1=TFloat(0,pr);
-  TFloat tolAbs=TFloat(0.0000000001,pr);
+  TFloat mitad,pos;
 
   //busco un valor b para el intervalo [a,b] de bisección
   TFloat b = TFloat(1.0,pr);
@@ -54,15 +55,14 @@ TFloat biseccion_generico(TFloat (*f)(const Datos&,TFloat),const Datos& d, TFloa
   x0=dos_tf*b;
   x1=b;
   while( iter_hechas < iter ){
-    // cout << "Error rel=" << errorRelativo(x0,x1).dbl() << " x0=" << x0.dbl() << " x1=" << x1.dbl() << endl;
 
-    if (iter==max_iter && errorRelativo(x0,x1).dbl() < tolerancia.dbl() && errorAbsoluto(f(d,x1),cero_tf).dbl() < tolAbs.dbl() ) { 
-      printf("chau %10.20f %10.20f\n",errorAbsoluto(f(d,x1),cero_tf).dbl(),f(d,x1).dbl());
+    // Solo se ejecuta este bloque si no es una llamada a biseccion_n
+    if (iter==max_iter && errorRelativo(x0,x1).dbl() < tolerancia.dbl() && errorAbsoluto(f(d,x1),cero_tf).dbl() <= tolAbs.dbl() ) { 
       break; 
-    }  // Solo sale por error relativo si es una llamada comun
+    }
 
-    TFloat mitad = (b + a) / dos_tf;
-    TFloat pos = f(d, mitad);
+    mitad = (b + a) / dos_tf;
+    pos = f(d, mitad);
 
     if ( pos.dbl() < 0.0 ){
       b = mitad;
@@ -74,12 +74,11 @@ TFloat biseccion_generico(TFloat (*f)(const Datos&,TFloat),const Datos& d, TFloa
     x1=mitad;
     iter_hechas++;
   }
-  return (a + b) / dos_tf;
+  return x1;
 }
 
 TFloat biseccion_n(TFloat (*f)(const Datos&,TFloat),const Datos& d, int iter){
   int ih;
-  cout << biseccion_generico(f,d,0,-1,iter,ih).dbl() << endl;
   return biseccion_generico(f,d,0,-1,iter,ih); 
 }
 
@@ -90,12 +89,13 @@ TFloat biseccion(TFloat (*f)(const Datos&,TFloat),const Datos& d,TFloat toleranc
 
 TFloat newton(TFloat (*f)(const Datos&,TFloat),TFloat (*f1)(const Datos&,TFloat),const Datos& d,TFloat tolerancia,int max_iter, TFloat t, int& iter){
 
-  iter=1;
-
+  TFloat cero_tf=TFloat(0.0,pr);
+  TFloat tolAbs=TFloat(0.0000000001,pr);
   TFloat x0 = t ;
   TFloat x1 = x0 - f(d, x0) / f1(d, x0);  // 1ra iteracion
 
-  while(errorRelativo(x0,x1).dbl() > tolerancia.dbl() && iter < max_iter){
+  iter=1;
+  while((errorRelativo(x0,x1).dbl() > tolerancia.dbl() || errorAbsoluto(f(d,x1),cero_tf).dbl() > tolAbs.dbl()) && iter < max_iter){
     x0 = x1;
     x1 = x0 - f(d, x0) / f1(d, x0);
     iter++;
