@@ -27,13 +27,15 @@ int main(int argc, char* argv[]){
     exit(1);
   }
 
+  // Lectura de parametros y Seteo de variables globales
   pr=(size_t)atoi(argv[1]);
   assert (pr>=1 && pr <=52);
 
   g = TFloat(9.81,pr);
-
   tolerancia=TFloat(atof(argv[2]),pr);
   max_iter=atoi(argv[3]);
+
+  // Generacion de struct con los parametros
   datos.h=TFloat(atof(argv[4]),pr);
   datos.v0=TFloat(atof(argv[5]),pr);
   datos.m=TFloat(atof(argv[6]),pr);
@@ -41,41 +43,44 @@ int main(int argc, char* argv[]){
   datos.fr=TFloat(atof(argv[8]),pr);
 
 
-  // primer impacto
+  // Primer impacto
   TFloat t1;
   t1=biseccion(&posicion,datos,tolerancia,max_iter,iter1);
   //printf("posicion(t1)=%10.20f\n",posicion(datos,t1).dbl());
 
   printf("log pr=%d t1=%10.20f posicion(t1)=%10.20f iter=%d\n",pr,t1.dbl(),posicion(datos,t1).dbl(),iter1);
 
+  // Energia mecanica hasta t1
   incremento=t1.dbl()/200.0;
   for (int i=0; i<200 ; i++){
     printf("emt1 %d %10.20f %10.20f\n", pr, incremento*i, energiaMecanica(datos,TFloat(incremento*i,pr)).dbl());
   }
   printf("emt1 %d %10.20f %10.20f\n", pr, t1.dbl(), energiaMecanica(datos,t1).dbl());
 
-  // despues del primer impacto cambian v0 y h
+  // Despues del primer impacto cambian v0 y h
   datos.h=TFloat(0.0,pr);
   TFloat menos_uno_tf=TFloat(-1,pr);
   datos.v0=menos_uno_tf*datos.fr*velocidad(datos,t1);
 
-  // altura maxima
+  // Altura maxima
   TFloat t_h_max=biseccion(&velocidad,datos,tolerancia,max_iter,iter2);
-  printf("log pr=%d t_h_max=%10.20f velocidad(t_h_max)=%10.20f iter=%d\n",pr,t_h_max.dbl(),velocidad(datos,t_h_max).dbl(),iter2);
+  printf("log pr=%d t_h_max=%10.20f velocidad(t_h_max)=%10.20f iter=%d posicion(t_h_max)=%10.20f\n",pr,t_h_max.dbl(),velocidad(datos,t_h_max).dbl(),iter2,posicion(datos,t_h_max).dbl());
   TFloat h_max=posicion(datos,t_h_max);
 
-  // segundo impacto
+  // Segundo impacto
   TFloat t2;
   t2=biseccion(&posicion,datos,tolerancia,max_iter,iter3);
 
   printf("log pr=%d t2=%10.20f posicion(t2)=%10.20f iter=%d\n",pr,t2.dbl(),posicion(datos,t2).dbl(),iter3);
 
+  // Energia mecanica entre t1 y t2
   incremento=t2.dbl()/200.0;
   for (int i=0; i<200 ; i++){
     printf("emt2 %d %10.20f %10.20f\n",pr, t1.dbl()+incremento*i, energiaMecanica(datos,TFloat(incremento*i,pr)).dbl());
   }
   printf("emt2 %d %10.20f %10.20f\n", pr, (t1+t2).dbl(), energiaMecanica(datos,t2).dbl());
 
+  // Resultado en una sola linea
   printf("%d %10.20f %d %10.20f %d %10.20f %d\n",pr,t1.dbl(),iter1,h_max.dbl(),iter2,(t1+t2).dbl(),iter3);
 
   return 0;

@@ -37,7 +37,7 @@ TFloat biseccion_generico(TFloat (*f)(const Datos&,TFloat),const Datos& d, TFloa
   TFloat a=TFloat(0.0,pr);
   TFloat dos_tf=TFloat(2.0,pr);
   TFloat cero_tf=TFloat(0.0,pr);
-  TFloat tolAbs=TFloat(0.0000000001,pr);
+  TFloat tolAbs=TFloat(0.000001,pr);
   TFloat x0=TFloat(0,pr);
   TFloat x1=TFloat(0,pr);
   TFloat mitad,pos;
@@ -56,7 +56,8 @@ TFloat biseccion_generico(TFloat (*f)(const Datos&,TFloat),const Datos& d, TFloa
   x1=b;
   while( iter_hechas < iter ){
 
-    // Solo se ejecuta este bloque si no es una llamada a biseccion_n
+    // Solo se ejecuta este bloque si no es una llamada a biseccion_n ya que si viene de biseccion_n max_iter sera -1
+    // y la primera igualdad nunca se cumplira
     if (iter==max_iter && errorRelativo(x0,x1).dbl() < tolerancia.dbl() && errorAbsoluto(f(d,x1),cero_tf).dbl() <= tolAbs.dbl() ) { 
       break; 
     }
@@ -86,6 +87,7 @@ TFloat biseccion_n(TFloat (*f)(const Datos&,TFloat),const Datos& d, int iter){
 TFloat biseccion(TFloat (*f)(const Datos&,TFloat),const Datos& d,TFloat tolerancia, int max_iter, int& iter){
   return biseccion_generico(f,d,tolerancia,max_iter,max_iter,iter);
 }
+
 
 TFloat newton(TFloat (*f)(const Datos&,TFloat),TFloat (*f1)(const Datos&,TFloat),const Datos& d,TFloat tolerancia,int max_iter, TFloat t, int& iter){
 
