@@ -1,0 +1,10 @@
+a=load('koko');
+plot(a(:,1),a(:,2),'*');
+xlabel('Precision');
+ylabel('Tiempo hasta ultimo impacto');
+print -dpng prec-tiempo.png
+
+plot(a(:,1),a(:,3),'*');
+xlabel('Precision');
+ylabel('Cantidad de rebotes');
+print -dpng prec-impactos.png
