@@ -69,7 +69,7 @@ int main(int argc, char* argv[]){
 
   if (ci==200) ci=-1; // infinito
 
-  printf("pr=%d fr=%10.20f cr=%10.20f tiempo=%10.20f ci=%d\n",pr,datos.fr.dbl(),datos.cr.dbl(),acum.dbl(),ci);
+  printf("pr=%d fr=%.2f cr=%.2f tiempo=%.10f ci=%d\n",pr,datos.fr.dbl(),datos.cr.dbl(),acum.dbl(),ci);
   return 0;
 }
 
