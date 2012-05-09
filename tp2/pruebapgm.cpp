@@ -10,7 +10,7 @@ int main()
   Pgm I,J;
   //I.load("64x64/blond.pgm"); // Carga
   //I.load("128x128/einstein.pgm"); // Carga
-  I.load("256x256/goldhill.pgm"); // Carga
+  I.load("256x256/goldhill.pgm",50); // Carga
 
   J=I; // copia la imagen
 

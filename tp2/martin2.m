@@ -53,8 +53,6 @@ tic
 T = K\b;
 toc
 
-save T
-
 size(T)
 
 B=reshape(T,n,n)';

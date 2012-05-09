@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <math.h>
 
 #include "pgm.h"
 
@@ -83,26 +84,73 @@ void Pgm::load(const char* archivo, int fr){
     Maxval=lee_token_n(f);
     assert(Maxval>=0 && Maxval<=65535);
 
-    int rw=(Width*(100-fr))/100;
-    int rh=(Height*(100-fr))/100;
-
-    //cout << rw << endl;
-    //cout << rh << endl;
-
-    Raster=vector< vector<int> >(Height, vector<int>(Width,0));
+    vector< vector<int> > RasterTemp=vector< vector<int> >(Height, vector<int>(Width,0));
 
     for(int i=0;i<Height;i++){
       for(int j=0;j<Width;j++){
         f>>c;
-        Raster[i][j]=c;
+        RasterTemp[i][j]=c;
         if (Maxval > 255) {
           f>>c;
-          Raster[i][j]=Raster[i][j]*256+c;
+          RasterTemp[i][j]=RasterTemp[i][j]*256+c;
         }
       }
     }
 
     f.close();
+
+    Width=(int)floor(WidthOrig*((100-fr)/100.0)+0.5);
+    Height=(int)floor(HeightOrig*((100-fr)/100.0)+0.5);
+
+    vector< vector<int> > RasterTemp2=vector< vector<int> >(HeightOrig, vector<int>(Width,0));
+
+    int co=WidthOrig/Width;
+    int rei=WidthOrig%Width/2;
+    int ref=WidthOrig%Width/2+(WidthOrig%Width)%2;
+    int s;
+    int jr=0;
+    int cnt=0;
+    int color=0;
+
+    for(int i=0;i<HeightOrig;i++){
+      for(int j=0;j<WidthOrig;j++){
+        if (jr>=rei && jr<=Width-ref-1) s=co; else s=co+1;
+        color+=RasterTemp[i][j];
+        cnt++;
+        if (cnt==s) {
+          RasterTemp2[i][jr]=(int)floor((color+0.0)/cnt+0.5);
+          color=0;
+          cnt=0;
+          jr++;
+        }
+      }
+      jr=0;
+    }
+
+    Raster=vector< vector<int> >(Height, vector<int>(Width,0));
+
+    co=HeightOrig/Height;
+    rei=HeightOrig%Height/2;
+    ref=HeightOrig%Height/2+(HeightOrig%Height)%2;
+    int ir=0;
+    cnt=0;
+    color=0;
+
+    for(int j=0;j<Width;j++){
+      for(int i=0;i<HeightOrig;i++){
+        if (ir>=rei && ir<=Height-ref-1) s=co; else s=co+1;
+        color+=RasterTemp2[i][j];
+        cnt++;
+        if (cnt==s) {
+          Raster[ir][j]=(int)floor((color+0.0)/cnt+0.5);
+          color=0;
+          cnt=0;
+          ir++;
+        }
+      }
+      ir=0;
+    }
+
 }
 
 void Pgm::save(const char* archivo){
