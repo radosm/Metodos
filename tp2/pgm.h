@@ -14,12 +14,13 @@ using namespace std;
 
 class Pgm {
 public:
-    Pgm();
-    Pgm(const char* archivo);
-    Pgm(const char* archivo, int fr);
-    void load(const char* archivo);
-    void load(const char* archivo, int fr);
-    void save(const char* archivo);
+    Pgm();                                   // Constructor
+    Pgm(const char* archivo);                // Constructor
+    Pgm(const char* archivo, int fr);        // Constructor
+    void load(const char* archivo);          // Carga la imagen sin reducir
+    void load(const char* archivo, int fr);  // Carga la imagen con un factor de reduccion, tamaño-(100-fr)%
+    void save(const char* archivo);          // Graba en tamaño reducido
+    void saveOrig(const char* archivo);      // Graba en tamaño original
     void operator=(const Pgm& I);
 
     int width();

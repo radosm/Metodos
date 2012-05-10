@@ -102,58 +102,24 @@ void Pgm::load(const char* archivo, int fr){
     Width=(int)floor(WidthOrig*((100-fr)/100.0)+0.5);
     Height=(int)floor(HeightOrig*((100-fr)/100.0)+0.5);
 
-    vector< vector<int> > RasterTemp2=vector< vector<int> >(HeightOrig, vector<int>(Width,0));
-
-    int co=WidthOrig/Width;
-    int rei=WidthOrig%Width/2;
-    int ref=WidthOrig%Width/2+(WidthOrig%Width)%2;
-    int s;
-    int jr=0;
-    int cnt=0;
-    int color=0;
-
-    for(int i=0;i<HeightOrig;i++){
-      for(int j=0;j<WidthOrig;j++){
-        if (jr>=rei && jr<=Width-ref-1) s=co; else s=co+1;
-        color+=RasterTemp[i][j];
-        cnt++;
-        if (cnt==s) {
-          RasterTemp2[i][jr]=(int)floor((color+0.0)/cnt+0.5);
-          color=0;
-          cnt=0;
-          jr++;
-        }
-      }
-      jr=0;
-    }
-
     Raster=vector< vector<int> >(Height, vector<int>(Width,0));
 
-    co=HeightOrig/Height;
-    rei=HeightOrig%Height/2;
-    ref=HeightOrig%Height/2+(HeightOrig%Height)%2;
-    int ir=0;
-    cnt=0;
-    color=0;
+    double x_ratio = HeightOrig/(double)Height ;
+    double y_ratio = WidthOrig/(double)Width ;
+    double px, py ; 
 
-    for(int j=0;j<Width;j++){
-      for(int i=0;i<HeightOrig;i++){
-        if (ir>=rei && ir<=Height-ref-1) s=co; else s=co+1;
-        color+=RasterTemp2[i][j];
-        cnt++;
-        if (cnt==s) {
-          Raster[ir][j]=(int)floor((color+0.0)/cnt+0.5);
-          color=0;
-          cnt=0;
-          ir++;
+    for (int i=0;i<Height;i++) {
+        for (int j=0;j<Width;j++) {
+            px = floor(j*x_ratio) ;
+            py = floor(i*y_ratio) ;
+            Raster[i][j] = RasterTemp[(int)py][(int)px];
         }
-      }
-      ir=0;
     }
 
 }
 
 void Pgm::save(const char* archivo){
+
     ofstream f;
     f.open(archivo);
     assert(f);
@@ -171,6 +137,45 @@ void Pgm::save(const char* archivo){
           f<<(unsigned char)(Raster[i][j]-(Raster[i][j]/256)*256);
         } else {
           f<<(unsigned char)Raster[i][j];
+        }
+      }
+    }
+
+    f.close();
+}
+
+void Pgm::saveOrig(const char* archivo){
+
+    vector< vector<int> > RasterTemp=vector< vector<int> >(HeightOrig, vector<int>(WidthOrig,0));
+
+    double x_ratio = Height/(double)HeightOrig ;
+    double y_ratio = Width/(double)WidthOrig ;
+    double px, py ; 
+
+    for (int i=0;i<HeightOrig;i++) {
+        for (int j=0;j<WidthOrig;j++) {
+            px = floor(j*x_ratio) ;
+            py = floor(i*y_ratio) ;
+            RasterTemp[i][j] = Raster[(int)py][(int)px];
+        }
+    }
+    ofstream f;
+    f.open(archivo);
+    assert(f);
+
+    f << "P5" << endl;
+    f << "# Grabado por clase Pgm de Elisa y Martin!" << endl;
+    f << WidthOrig << endl;
+    f << HeightOrig << endl;
+    f << Maxval << endl;
+
+    for(int i=0;i<HeightOrig;i++){
+      for(int j=0;j<WidthOrig;j++){
+        if (Maxval > 255) {
+          f<<(unsigned char)RasterTemp[i][j]/256;
+          f<<(unsigned char)(RasterTemp[i][j]-(RasterTemp[i][j]/256)*256);
+        } else {
+          f<<(unsigned char)RasterTemp[i][j];
         }
       }
     }

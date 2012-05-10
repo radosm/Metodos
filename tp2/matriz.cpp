@@ -23,7 +23,7 @@ Matriz Matriz::operator+(const Matriz& B) const{
 
     for (int i=0; i<cantFils; i++){
         for (int j=0; j<cantCols; j++){
-            C.valores[i][j]=valores[i][j]+B.valores[i][j];
+            C.sub(i,j)=sub(i,j)+B.sub(i,j);
         }
     }
     return C;
@@ -36,7 +36,7 @@ ostream& operator<<(ostream& os, const Matriz& A){
             os << " ";
         }
         for (int j=0; j<A.cantCols;j++){
-            os << A.valores[i][j] << ", ";
+            os << A.sub(i,j) << ", ";
         }
         if (i==A.cantFils-1){
               os << "]";
@@ -64,7 +64,7 @@ Matriz Matriz::fila(int i) const{
     assert (i>=0 && i<cantFils);
     Matriz f=Matriz(1,cantCols);
     for (int c=0; c<cantCols; c++){
-        f.sub(0,c)=valores[i][c];
+        f.sub(0,c)=sub(i,c);
     }
     return f;
 }
@@ -85,7 +85,7 @@ Matriz operator*(Coef k,const Matriz& A){
 void Matriz::multiplicarFila(int i,Coef k) {
    assert (i>=0 && i<cantFils);
    for (int c=0;c<cantCols;c++){
-        valores[i][c]=valores[i][c]*k;
+        valores[i][c]=sub(i,c)*k;
    }
 }
 
@@ -95,13 +95,13 @@ void Matriz::multiplicarFila(int i,Coef k) {
 //    for (int i=0; i<cantFils; i++){
 //        cout << "anda" << endl;
 //        for(int j=0;j<cantCols;j++){
-//            if (valores[i][j]!=0){
-//                C.fila(i)=C.fila(i)+valores[i][j]*B.fila(j);
+//            if (sub(i,j)!=0){
+//                C.fila(i)=C.fila(i)+sub(i,j)*B.fila(j);
 //            }
 //        }
 //    }
 //        //el problema acá es que C.fila(i) me da una copia de la fila, no la fila
-                //C.fila(i)=C.fila(i)+valores[i][j]*B.fila(j);
+                //C.fila(i)=C.fila(i)+sub(i,j)*B.fila(j);
 //}
 
 Matriz Matriz::operator*(const Matriz& B) const{
@@ -111,7 +111,7 @@ Matriz Matriz::operator*(const Matriz& B) const{
     for (int i=0; i<cantFils; i++){
         for(int j=0;j<B.cantCols;j++){
             for(int k=0;k<cantCols;k++)
-                C.valores[i][j]=C.valores[i][j]+valores[i][k]*B.valores[k][j];
+                C.sub(i,j)=C.sub(i,j)+sub(i,k)*B.sub(k,j);
         }
     }
     return C;
@@ -139,7 +139,7 @@ bool Matriz::pivotear(Matriz& P,int i){
     return true;
 }
 
-void Matriz::descomposicionLU(Matriz& L, Matriz& U, Matriz& P)const{
+void Matriz::descomposicionPLU(Matriz& L, Matriz& U, Matriz& P)const{
     P=Id(cantFils);
     U=*this;
     L=Id(cantFils);
@@ -156,8 +156,8 @@ void Matriz::descomposicionLU(Matriz& L, Matriz& U, Matriz& P)const{
             }
         }
     }
-    cout << "L*U " << endl << L*U << endl;
-    cout << "P*A   " << endl << P*(*this) << endl;
+    //cout << "L*U " << endl << L*U << endl;
+    //cout << "P*A   " << endl << P*(*this) << endl;
 }
 
 Matriz Matriz::trasponer()const{
@@ -188,4 +188,93 @@ void Matriz::intercambiarFilas(int i, int j){
     for (int k=0;k<cantCols;k++){
         swap(sub(i,k),sub(j,k));
     }
+}
+
+Matriz Matriz::resolverSistema(const Matriz& b, Matriz& x) const{
+    //tomo como pre que b sea vector columna
+    assert(b.cantCols==1);
+    Matriz L;
+    Matriz P;
+    Matriz U;
+
+    descomposicionPLU(L,U,P);
+
+    //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
+
+    //resuelvo Ux=b  ----> obtengo y
+    cout << "U: " << endl << U << endl;
+    Matriz y;
+    U.resolverTrigSup(b,y);
+    cout << "despues de triangular," << endl << "U: " << endl << U << endl;
+    cout << "solucion :" << endl << y << endl;
+
+    //resuelvo Ly=b
+    cout << "prueba 1" << endl;
+    Matriz z;
+    cout << "prueba 2" << endl;
+    L.resolverTrigInf(y,z);
+    cout << "prueba 3" << endl;
+
+    //x=P.trasponer()*z;
+
+
+}
+
+void Matriz::resolverTrigSup(const Matriz& b,Matriz& y){
+    //la matriz implícita es triangular superior
+    //la matriz implícita es cuadrada
+    assert(cantCols==cantFils);
+    y=Matriz(b.cantFils,b.cantCols);
+    y=b;
+    //la diagonal no tiene ceros
+    for(int i=0;i<cantCols;i++){
+        assert(sub(i,i)!=0);
+    }
+
+
+    for (int i=cantFils-1;i>-1; i--){
+        cout << "fila :" << i+1 << endl;
+        for(int j=i+1;j<cantCols;j++){
+            cout << "resto columna :" << j+1 << endl;
+            y.sub(i,0)=y.sub(i,0)-sub(i,j);
+        }
+
+        cout << "b(" << i+1 << ") :" << y.sub(i,0)  << " (antes de dividir)"<< endl;
+        y.sub(i,0)=y.sub(i,0)/sub(i,i);
+        cout << "b(" << i+1 << ") :" << y.sub(i,0) << endl;
+        //multiplicar columna
+        for(int f=i-1;f>-1;f--){
+            sub(f,i)=sub(f,i)*y.sub(i,0);
+        }
+    }
+}
+
+
+void Matriz::resolverTrigInf(const Matriz& y,Matriz& z){
+    //la matriz implícita es triangular inferior
+    //la matriz implícita es cuadrada
+    assert(cantCols==cantFils);
+    z=Matriz(y.cantFils,y.cantCols);
+    z=y;
+    //la diagonal no tiene ceros
+    for(int i=0;i<cantCols;i++){
+        assert(sub(i,i)!=0);
+    }
+
+
+    for (int i=0;i<cantFils; i++){
+
+        for(int j=i-1;j>-1;j--){
+            cout << "resto columna :" << j+1 << endl;
+            z.sub(i,0)=z.sub(i,0)-sub(i,j);
+        }
+
+        z.sub(i,0)=z.sub(i,0)/sub(i,i);
+
+        //multiplicar columna
+        for(int f=i+1;f<cantFils;f++){
+            sub(f,i)=sub(f,i)*z.sub(i,0);
+        }
+    }
+    cout << "pude trig inf" << endl;
 }

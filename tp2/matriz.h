@@ -7,7 +7,7 @@ typedef double Coef; //para zafar hacer un template
 
 class Matriz{
 public:
-    Matriz() {}
+    Matriz() {};
 
     Matriz(int m, int n);
 
@@ -25,11 +25,13 @@ public:
     Coef& sub(int i,int j);
     const Coef& sub(int i,int j) const;
 
-    void descomposicionLU(Matriz& L, Matriz& U, Matriz& P)const;
+    void descomposicionPLU(Matriz& L, Matriz& U, Matriz& P)const;
 
     Matriz trasponer()const;
 
     void intercambiarFilas(int i, int j);
+
+    Matriz resolverSistema(const Matriz& b,Matriz& x) const;
 
 private:
     int cantFils;
@@ -43,6 +45,11 @@ private:
     //me devuelve una copia de la fila
     Matriz fila(int i) const;
     bool pivotear(Matriz& P,int i);
+
+    void resolverTrigSup(const Matriz& b,Matriz& y);
+
+    void resolverTrigInf(const Matriz& y,Matriz& z);
+
 
 };
 
