@@ -1,10 +1,48 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include "pgm.h"
+#include "matriz.h"
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+  if (argc<4) {
+    cerr << "Error, ingrese parametros: imagen, lambda, factor_reduccion\n";
+    exit(1);
+  }
+
+  char *archivo=argv[1];
+  int lambda=atoi(argv[2]);
+  int fr=atoi(argv[3]);
+
+  Pgm I,J;
+  I.load(archivo,fr); // Carga
+
+  int n=I.width();
+  int m=I.height();
+  Matriz K(n*m,n*m);
+  Matriz b(n*m,1);
+
+  J=I; // copia la imagen
+
+  // Pone ruido en imagen J
+  for (int i=0;i<J.height();i+=10){
+    for (int j=0;j<J.width();j+=10){
+      J.sub(i,j)=0;
+    }
+  }
+
+//////////////////
+/////////////////
+/*
 function martin2(imagen,l)
 
 I=imread(imagen);
 ##I=B(1:7,1:7);
 
 n=size(I)(1);
-m=size(I)(2);
 
 for iii = 1:12
   for ii = 1:12
@@ -87,3 +125,15 @@ colormap(gray)
 %%colormap(gray)
 %%
 view(3)
+*/
+/////////////////
+/////////////////
+
+
+  I.save("koko_reducido.pgm");
+  I.saveOrig("koko.pgm");
+  J.save("koko_reducido_ruido.pgm");
+  J.saveOrig("koko_ruido.pgm");
+
+  return 0;
+}
