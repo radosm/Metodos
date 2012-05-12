@@ -89,20 +89,7 @@ void Matriz::multiplicarFila(int i,Coef k) {
    }
 }
 
-//Matriz Matriz::operator*(const Matriz& B) const{
-//    assert(cantCols==B.cantFils);
-//    Matriz C=Matriz(cantFils,B.cantCols);
-//    for (int i=0; i<cantFils; i++){
-//        cout << "anda" << endl;
-//        for(int j=0;j<cantCols;j++){
-//            if (sub(i,j)!=0){
-//                C.fila(i)=C.fila(i)+sub(i,j)*B.fila(j);
-//            }
-//        }
-//    }
-//        //el problema acá es que C.fila(i) me da una copia de la fila, no la fila
-                //C.fila(i)=C.fila(i)+sub(i,j)*B.fila(j);
-//}
+
 
 Matriz Matriz::operator*(const Matriz& B) const{
     assert(cantCols==B.cantFils);
@@ -156,14 +143,13 @@ void Matriz::descomposicionPLU(Matriz& L, Matriz& U, Matriz& P)const{
             }
         }
     }
-    //cout << "L*U " << endl << L*U << endl;
-    //cout << "P*A   " << endl << P*(*this) << endl;
+
 }
 
 Matriz Matriz::trasponer()const{
     Matriz T(cantCols,cantFils);
     for(int i=0;i<cantFils;i++){
-        for (int j=0;cantCols;j++){
+        for (int j=0;j<cantCols;j++){
             T.sub(j,i)=sub(i,j);
         }
     }
@@ -198,25 +184,17 @@ Matriz Matriz::resolverSistema(const Matriz& b, Matriz& x) const{
     Matriz U;
 
     descomposicionPLU(L,U,P);
-
+    Matriz bAux=P*b;
     //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
 
-    //resuelvo Ux=b  ----> obtengo y
-    cout << "U: " << endl << U << endl;
+    //resuelvo Ux=Pb  ----> obtengo y
     Matriz y;
-    U.resolverTrigSup(b,y);
-    cout << "despues de triangular," << endl << "U: " << endl << U << endl;
-    cout << "solucion :" << endl << y << endl;
+    L.resolverTrigInf(bAux,y);
 
     //resuelvo Ly=b
-    cout << "prueba 1" << endl;
-    Matriz z;
-    cout << "prueba 2" << endl;
-    L.resolverTrigInf(y,z);
-    cout << "prueba 3" << endl;
+    U.resolverTrigSup(y,x);
 
-    //x=P.trasponer()*z;
-
+    return x;
 
 }
 
@@ -233,15 +211,11 @@ void Matriz::resolverTrigSup(const Matriz& b,Matriz& y){
 
 
     for (int i=cantFils-1;i>-1; i--){
-        cout << "fila :" << i+1 << endl;
         for(int j=i+1;j<cantCols;j++){
-            cout << "resto columna :" << j+1 << endl;
             y.sub(i,0)=y.sub(i,0)-sub(i,j);
         }
 
-        cout << "b(" << i+1 << ") :" << y.sub(i,0)  << " (antes de dividir)"<< endl;
         y.sub(i,0)=y.sub(i,0)/sub(i,i);
-        cout << "b(" << i+1 << ") :" << y.sub(i,0) << endl;
         //multiplicar columna
         for(int f=i-1;f>-1;f--){
             sub(f,i)=sub(f,i)*y.sub(i,0);
@@ -265,7 +239,6 @@ void Matriz::resolverTrigInf(const Matriz& y,Matriz& z){
     for (int i=0;i<cantFils; i++){
 
         for(int j=i-1;j>-1;j--){
-            cout << "resto columna :" << j+1 << endl;
             z.sub(i,0)=z.sub(i,0)-sub(i,j);
         }
 
@@ -276,5 +249,15 @@ void Matriz::resolverTrigInf(const Matriz& y,Matriz& z){
             sub(f,i)=sub(f,i)*z.sub(i,0);
         }
     }
-    cout << "pude trig inf" << endl;
+
 }
+
+
+
+
+
+
+
+//        cout << "b(" << i+1 << ") :" << y.sub(i,0) << endl;
+
+//        cout << "b(" << i+1 << ") :" << y.sub(i,0)  << " (antes de dividir)"<< endl;
