@@ -1,9 +1,13 @@
 #include <vector>
 #include <iostream>
 
+#include "Banda.h"
+
 
 
 typedef double Coef; //para zafar hacer un template
+
+
 
 class Matriz{
 public:
@@ -16,6 +20,8 @@ public:
     Matriz operator*(Coef k) const;
 
     Matriz operator*(const Matriz& B) const;
+
+    Matriz operator*(const Banda& B) const;
 
     Matriz operator-(const Matriz& B) const;
 
@@ -53,6 +59,8 @@ private:
 
 };
 
+
 Matriz operator*(Coef k,const Matriz& A);
+
 
 Matriz Id(int n);

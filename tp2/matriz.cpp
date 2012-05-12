@@ -1,5 +1,7 @@
 #include <cassert>
 #include <iostream>
+//para poder usar mínimo y máximo
+#include <algorithm>
 
 #include "matriz.h"
 
@@ -28,6 +30,8 @@ Matriz Matriz::operator+(const Matriz& B) const{
     }
     return C;
 }
+
+
 
 ostream& operator<<(ostream& os, const Matriz& A){
     os << "[";
@@ -135,7 +139,7 @@ void Matriz::descomposicionPLU(Matriz& L, Matriz& U, Matriz& P)const{
     for (int i=0;i<cantFils;i++){
         if (!U.pivotear(P,i)){ continue;}
         for(int j=i+1;j<cantFils;j++){
-        //fila j (j>i) ---> fila j -a(j,i)/a(i,i)*fila(i)
+        //fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
             Coef mult = U.sub(j,i) / U.sub(i,i);
             L.sub(j,i)=mult;
             for(int c=i;c<cantCols;c++){
@@ -187,16 +191,18 @@ Matriz Matriz::resolverSistema(const Matriz& b, Matriz& x) const{
     Matriz bAux=P*b;
     //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
 
-    //resuelvo Ux=Pb  ----> obtengo y
+    //resuelvo Uy=Pb  ----> obtengo y
     Matriz y;
     L.resolverTrigInf(bAux,y);
 
-    //resuelvo Ly=b
+    //resuelvo Lx=y
     U.resolverTrigSup(y,x);
 
     return x;
 
 }
+
+
 
 void Matriz::resolverTrigSup(const Matriz& b,Matriz& y){
     //la matriz implícita es triangular superior
@@ -251,6 +257,26 @@ void Matriz::resolverTrigInf(const Matriz& y,Matriz& z){
     }
 
 }
+
+
+
+
+Matriz Matriz::operator*(const Banda& B)const{
+    assert(cantCols==B.filas());
+    Matriz C=Matriz(cantFils,B.columnas());
+    //defino a(i,j)
+    int d=(B.cantDiag()-1)/2;
+    for (int i=0; i<cantFils; i++){
+        for(int j=0;j<B.columnas();j++){
+            //solo hay elementos no nulos en la banda
+            for(int k=max(0,j-d);k<min(cantCols,j+d);k++){
+                C.sub(i,j)=C.sub(i,j)+sub(i,k)*B.sub(k,j);
+            }
+        }
+    }
+    return C;
+}
+
 
 
 

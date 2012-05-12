@@ -27,10 +27,10 @@ int main(int argc, char* argv[])
 
   J=I; // copia la imagen
 
-  // Pone ruido en imagen J
+  // Pone ruido en imagen I
   for (int i=0;i<J.height();i+=5){
     for (int j=0;j<J.width();j+=5){
-      J.sub(i,j)=0;
+      I.sub(i,j)=0;
     }
   }
 
@@ -63,8 +63,8 @@ int main(int argc, char* argv[])
     b.sub((f-1)*m+m -1,0) = I.sub(f -1,m -1);
   }
 
-  //Matriz x(n*m,1);
-  //K.resolverSistema(b,x);
+  Matriz x(n*m,1);
+  K.resolverSistema(b,x);
 
   // Graba matriz K
   ofstream f("K.matriz");
@@ -82,16 +82,21 @@ int main(int argc, char* argv[])
       f << b.sub(i,0) << endl;
   }
   f.close();
+
+  int k=0;
+  for (int i=0;i<J.height();i++){
+    for (int j=0;j<J.width();j++){
+      J.sub(i,j)=x.sub(k++,0);
+    }
+  }
   
   // Graba dimensiones de la imagen
   f.open("dimensiones");
   f << n << " " << m << endl;
   f.close();
 
-  I.save("blond_reducido.pgm");
-  I.saveOrig("blond.pgm");
-  J.save("blond_reducido_ruido.pgm");
-  J.saveOrig("blond_ruido.pgm");
+  J.save("salida_reducido.pgm");
+  J.saveOrig("salida.pgm");
 
   return 0;
 }
