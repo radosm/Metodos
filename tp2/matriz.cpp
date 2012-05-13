@@ -180,102 +180,107 @@ void Matriz::intercambiarFilas(int i, int j){
     }
 }
 
-Matriz Matriz::resolverSistema(const Matriz& b, Matriz& x) const{
-    //tomo como pre que b sea vector columna
-    assert(b.cantCols==1);
-    Matriz L;
-    Matriz P;
-    Matriz U;
+//Matriz Matriz::resolverSistema(const Matriz& b, Matriz& x) const{
+//    //tomo como pre que b sea vector columna
+//    assert(b.cantCols==1);
+//    Matriz L;
+//    Matriz P;
+//    Matriz U;
+//
+//    descomposicionPLU(L,U,P);
+//    Matriz bAux=P*b;
+//    //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
+//
+//    //resuelvo Uy=Pb  ----> obtengo y
+//    Matriz y;
+//    L.resolverTrigInf(bAux,y);
+//
+//    //resuelvo Lx=y
+//    U.resolverTrigSup(y,x);
+//
+//    return x;
+//
+//}
 
-    descomposicionPLU(L,U,P);
-    Matriz bAux=P*b;
-    //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
 
-    //resuelvo Uy=Pb  ----> obtengo y
-    Matriz y;
-    L.resolverTrigInf(bAux,y);
+//
+//void Matriz::resolverTrigSup(const Matriz& b,Matriz& y){
+//    //la matriz implícita es triangular superior
+//    //la matriz implícita es cuadrada
+//    assert(cantCols==cantFils);
+//    y=Matriz(b.cantFils,b.cantCols);
+//    y=b;
+//    //la diagonal no tiene ceros
+//    for(int i=0;i<cantCols;i++){
+//        assert(sub(i,i)!=0);
+//    }
+//
+//
+//    for (int i=cantFils-1;i>-1; i--){
+//        for(int j=i+1;j<cantCols;j++){
+//            y.sub(i,0)=y.sub(i,0)-sub(i,j);
+//        }
+//
+//        y.sub(i,0)=y.sub(i,0)/sub(i,i);
+//        //multiplicar columna
+//        for(int f=i-1;f>-1;f--){
+//            sub(f,i)=sub(f,i)*y.sub(i,0);
+//        }
+//    }
+//}
 
-    //resuelvo Lx=y
-    U.resolverTrigSup(y,x);
+//
+//void Matriz::resolverTrigInf(const Matriz& y,Matriz& z){
+//    //la matriz implícita es triangular inferior
+//    //la matriz implícita es cuadrada
+//    assert(cantCols==cantFils);
+//    z=Matriz(y.cantFils,y.cantCols);
+//    z=y;
+//    //la diagonal no tiene ceros
+//    for(int i=0;i<cantCols;i++){
+//        assert(sub(i,i)!=0);
+//    }
+//
+//
+//    for (int i=0;i<cantFils; i++){
+//
+//        for(int j=i-1;j>-1;j--){
+//            z.sub(i,0)=z.sub(i,0)-sub(i,j);
+//        }
+//
+//        z.sub(i,0)=z.sub(i,0)/sub(i,i);
+//
+//        //multiplicar columna
+//        for(int f=i+1;f<cantFils;f++){
+//            sub(f,i)=sub(f,i)*z.sub(i,0);
+//        }
+//    }
+//
+//}
 
-    return x;
-
+int Matriz::cantFilas()const{
+    return cantFils;
 }
 
-
-
-void Matriz::resolverTrigSup(const Matriz& b,Matriz& y){
-    //la matriz implícita es triangular superior
-    //la matriz implícita es cuadrada
-    assert(cantCols==cantFils);
-    y=Matriz(b.cantFils,b.cantCols);
-    y=b;
-    //la diagonal no tiene ceros
-    for(int i=0;i<cantCols;i++){
-        assert(sub(i,i)!=0);
-    }
-
-
-    for (int i=cantFils-1;i>-1; i--){
-        for(int j=i+1;j<cantCols;j++){
-            y.sub(i,0)=y.sub(i,0)-sub(i,j);
-        }
-
-        y.sub(i,0)=y.sub(i,0)/sub(i,i);
-        //multiplicar columna
-        for(int f=i-1;f>-1;f--){
-            sub(f,i)=sub(f,i)*y.sub(i,0);
-        }
-    }
+int Matriz::cantColms()const{
+    return cantCols;
 }
 
-
-void Matriz::resolverTrigInf(const Matriz& y,Matriz& z){
-    //la matriz implícita es triangular inferior
-    //la matriz implícita es cuadrada
-    assert(cantCols==cantFils);
-    z=Matriz(y.cantFils,y.cantCols);
-    z=y;
-    //la diagonal no tiene ceros
-    for(int i=0;i<cantCols;i++){
-        assert(sub(i,i)!=0);
-    }
-
-
-    for (int i=0;i<cantFils; i++){
-
-        for(int j=i-1;j>-1;j--){
-            z.sub(i,0)=z.sub(i,0)-sub(i,j);
-        }
-
-        z.sub(i,0)=z.sub(i,0)/sub(i,i);
-
-        //multiplicar columna
-        for(int f=i+1;f<cantFils;f++){
-            sub(f,i)=sub(f,i)*z.sub(i,0);
-        }
-    }
-
-}
-
-
-
-
-Matriz Matriz::operator*(const Banda& B)const{
-    assert(cantCols==B.filas());
-    Matriz C=Matriz(cantFils,B.columnas());
-    //defino a(i,j)
-    int d=(B.cantDiag()-1)/2;
-    for (int i=0; i<cantFils; i++){
-        for(int j=0;j<B.columnas();j++){
-            //solo hay elementos no nulos en la banda
-            for(int k=max(0,j-d);k<min(cantCols,j+d);k++){
-                C.sub(i,j)=C.sub(i,j)+sub(i,k)*B.sub(k,j);
-            }
-        }
-    }
-    return C;
-}
+//Matriz Matriz::operator*(const Banda& B)const{
+//    assert(cantCols==B.filas());
+//    Matriz C=Matriz(cantFils,B.columnas());
+//    //defino a(i,j)
+//    int d=(B.cantDiag()-1)/2;
+//    for (int i=0; i<cantFils; i++){
+//        for(int j=0;j<B.columnas();j++){
+//            //solo hay elementos no nulos en la banda
+//            for(int k=max(0,j-d);k<min(cantCols,j+d);k++){
+//                C.sub(i,j)=C.sub(i,j)+sub(i,k)*B.sub(k,j);
+//            }
+//        }
+//    }
+//    return C;
+//}
 
 
 

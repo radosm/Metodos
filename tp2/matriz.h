@@ -1,7 +1,10 @@
+#ifndef _MATRIZ_H_
+#define _MATRIZ_H_
+
 #include <vector>
 #include <iostream>
 
-#include "Banda.h"
+//#include "Banda.h"
 
 
 
@@ -21,9 +24,14 @@ public:
 
     Matriz operator*(const Matriz& B) const;
 
-    Matriz operator*(const Banda& B) const;
+    //Matriz operator*(const Banda& B) const;
 
     Matriz operator-(const Matriz& B) const;
+
+
+    int cantFilas()const;
+    int cantColms()const;
+
 
 
     friend std::ostream& operator<<(std::ostream& os, const Matriz& A);
@@ -37,7 +45,7 @@ public:
 
     void intercambiarFilas(int i, int j);
 
-    Matriz resolverSistema(const Matriz& b,Matriz& x) const;
+    //Matriz resolverSistema(const Matriz& b,Matriz& x) const;
 
 private:
     int cantFils;
@@ -52,9 +60,9 @@ private:
     Matriz fila(int i) const;
     bool pivotear(Matriz& P,int i);
 
-    void resolverTrigSup(const Matriz& b,Matriz& y);
+    //void resolverTrigSup(const Matriz& b,Matriz& y);
 
-    void resolverTrigInf(const Matriz& y,Matriz& z);
+    //void resolverTrigInf(const Matriz& y,Matriz& z);
 
 
 };
@@ -64,3 +72,6 @@ Matriz operator*(Coef k,const Matriz& A);
 
 
 Matriz Id(int n);
+
+
+#endif

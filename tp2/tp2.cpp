@@ -6,6 +6,18 @@
 
 using namespace std;
 
+// Subindices de la matriz K
+double Ksub(int i,int j,int n,int m, double lambda){
+  // borde
+  if ((i>=0 && i<m-1) || (i%m)==0 || (i%m)==(m-1) || (i>=((n-1)*m) && i<(n*m-1))){
+    if (i==j) return 1; else return 0;
+  } 
+  // fuera del borde
+  if (i==j) return 4+lambda;
+  if (j==(i-1) || j==(i+1) || j==(i+m) || j==(i-m)) return -1;
+  return 0;
+}
+
 int main(int argc, char* argv[])
 {
   if (argc<4) {
@@ -63,8 +75,8 @@ int main(int argc, char* argv[])
     b.sub((f-1)*m+m -1,0) = I.sub(f -1,m -1);
   }
 
-  Matriz x(n*m,1);
-  K.resolverSistema(b,x);
+  //Matriz x(n*m,1);
+  //K.resolverSistema(b,x);
 
   // Graba matriz K
   ofstream f("K.matriz");
@@ -76,6 +88,17 @@ int main(int argc, char* argv[])
   }
   f.close();
 
+  // Graba matriz K producida por Ksub
+  f.open("K.matriz.Ksub");
+  for (int i=0;i<n*m;i++){
+    for (int j=0;j<n*m;j++){
+      f << Ksub(i,j,n,m,lambda) << " ";
+    }
+    f << endl;
+  }
+  f.close();
+
+/*
   // Graba vector b
   f.open("b.vector");
   for (int i=0;i<n*m;i++){
@@ -89,7 +112,7 @@ int main(int argc, char* argv[])
       J.sub(i,j)=x.sub(k++,0);
     }
   }
-  
+*/  
   // Graba dimensiones de la imagen
   f.open("dimensiones");
   f << n << " " << m << endl;

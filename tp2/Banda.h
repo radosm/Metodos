@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#include "matriz.h"
+
 
 typedef double Coef; //para zafar hacer un template
 
@@ -19,6 +21,14 @@ public:
 
         const Coef& sub(int i,int j)const;
         Coef& sub(int i,int j);
+
+        //pre: la matriz implicita tiene descomposicion LU sin pivoteo
+        void descomposicionLU(Banda& L, Banda& U)const;
+
+        Matriz resolverSistema(const Matriz& b,Matriz& x) const;
+        void resolverTrigSup(const Matriz& b,Matriz& y);
+        void resolverTrigInf(const Matriz& y,Matriz& z);
+
 
         friend std::ostream& operator<<(std::ostream& os, const Banda& B);
 
