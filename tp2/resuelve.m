@@ -2,7 +2,7 @@ function resuelve
 
 tic
 d=load("dimensiones");
-K=load("K.matriz");
+K=load("K.matriz.Ksub");
 b=load("b.vector");
 toc
 

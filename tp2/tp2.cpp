@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "pgm.h"
 #include "matriz.h"
+#include "Banda.h"
 
 using namespace std;
 
@@ -34,7 +35,7 @@ int main(int argc, char* argv[])
 
   int n=I.height();
   int m=I.width();
-  Matriz K(n*m,n*m);
+  Banda K(n*m,2*m+1);
   Matriz b(n*m,1);
 
   J=I; // copia la imagen
@@ -75,8 +76,8 @@ int main(int argc, char* argv[])
     b.sub((f-1)*m+m -1,0) = I.sub(f -1,m -1);
   }
 
-  //Matriz x(n*m,1);
-  //K.resolverSistema(b,x);
+  Matriz x(n*m,1);
+  K.resolverSistema(b,x);
 
   // Graba matriz K
   ofstream f("K.matriz");
@@ -98,7 +99,6 @@ int main(int argc, char* argv[])
   }
   f.close();
 
-/*
   // Graba vector b
   f.open("b.vector");
   for (int i=0;i<n*m;i++){
@@ -106,13 +106,14 @@ int main(int argc, char* argv[])
   }
   f.close();
 
+  // Imagen filtrada
   int k=0;
   for (int i=0;i<J.height();i++){
     for (int j=0;j<J.width();j++){
       J.sub(i,j)=x.sub(k++,0);
     }
   }
-*/  
+
   // Graba dimensiones de la imagen
   f.open("dimensiones");
   f << n << " " << m << endl;
