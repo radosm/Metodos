@@ -127,11 +127,11 @@ void Banda::descomposicionLU(Banda& L, Banda& U)const{
     // i es el i-esimo paso de la triangulación
     for (int i=0;i<filas();i++){
         int k=(banda-1)/2;
-        for(int j=i+1;j<min(filas(),k+1);j++){
+        for(int j=i+1;j<min(filas(),i+k+1);j++){
         //fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
             Coef mult = U.sub(j,i) / U.sub(i,i);
             L.sub(j,i)=mult;
-            for(int c=i;c<min(columnas(),k+1);c++){
+            for(int c=i;c<min(columnas(),i+k+1);c++){
 
                 U.sub(j,c) = U.sub(j,c) - mult * U.sub(i,c);
             }

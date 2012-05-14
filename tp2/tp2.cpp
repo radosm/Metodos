@@ -47,7 +47,6 @@ int main(int argc, char* argv[])
     }
   }
 
-
   // Arma sistema
   for (int f = 2; f<=n-1; f++){
     for (int c = 2;c<=m-1;c++){
