@@ -61,6 +61,7 @@ const Coef& Banda::sub(int i,int j)const{
 
 Coef& Banda::sub(int i,int j){
     //pre: estoy dentro de la banda (no quiero poder modificar los elementos fuera de la banda)
+    // cout << "i=" << i << " j=" <<j  << endl;
     assert(abs(i-j)<=(banda-1)/2);
 
     int indice=0;

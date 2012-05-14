@@ -81,14 +81,15 @@ int main(int argc, char* argv[])
 
   // Graba matriz K
   ofstream f("K.matriz");
+/*
   for (int i=0;i<n*m;i++){
     for (int j=0;j<n*m;j++){
       f << K.sub(i,j) << " ";
     }
     f << endl;
   }
+*/
   f.close();
-
   // Graba matriz K producida por Ksub
   f.open("K.matriz.Ksub");
   for (int i=0;i<n*m;i++){
@@ -110,7 +111,10 @@ int main(int argc, char* argv[])
   int k=0;
   for (int i=0;i<J.height();i++){
     for (int j=0;j<J.width();j++){
-      J.sub(i,j)=x.sub(k++,0);
+      int gris=(int)x.sub(k++,0);
+      if (gris > J.maxval()) gris = J.maxval();
+      if (gris < 0) gris = 0;
+      J.sub(i,j)=(int)gris;
     }
   }
 
@@ -121,6 +125,7 @@ int main(int argc, char* argv[])
 
   J.save("salida_reducido.pgm");
   J.saveOrig("salida.pgm");
+  I.saveOrig("original.pgm");
 
   return 0;
 }
