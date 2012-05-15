@@ -79,15 +79,15 @@ int main(int argc, char* argv[])
   K.resolverSistema(b,x);
 
   // Graba matriz K
-  ofstream f("K.matriz");
+  ofstream f;
 /*
+  f.open("K.matriz");
   for (int i=0;i<n*m;i++){
     for (int j=0;j<n*m;j++){
       f << K.sub(i,j) << " ";
     }
     f << endl;
   }
-*/
   f.close();
   // Graba matriz K producida por Ksub
   f.open("K.matriz.Ksub");
@@ -106,6 +106,13 @@ int main(int argc, char* argv[])
   }
   f.close();
 
+  // Graba dimensiones de la imagen
+  f.open("dimensiones");
+  f << n << " " << m << endl;
+  f.close();
+
+*/
+
   // Imagen filtrada
   int k=0;
   for (int i=0;i<J.height();i++){
@@ -116,11 +123,6 @@ int main(int argc, char* argv[])
       J.sub(i,j)=(int)gris;
     }
   }
-
-  // Graba dimensiones de la imagen
-  f.open("dimensiones");
-  f << n << " " << m << endl;
-  f.close();
 
   J.save("salida_reducido.pgm");
   J.saveOrig("salida.pgm");
