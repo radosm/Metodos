@@ -8,7 +8,7 @@ using namespace std;
 int main()
 {
 
-//
+//    cout << "prueba 1:" << endl;
 //    Banda B=Banda(3,5);
 //    B.sub(0,0)=2;
 //    B.sub(0,1)=3;
@@ -37,30 +37,83 @@ int main()
 //    B.resolverSistema(b,x);
 //
 //    cout <<"x: " << endl << x << endl;
+//
 
-    Banda C=Banda(3,5);
-    C.sub(0,0)=60;
-    C.sub(0,1)=30;
-    C.sub(0,2)=20;
-    C.sub(1,0)=30;
-    C.sub(1,1)=20;
-    C.sub(1,2)=15;
-    C.sub(2,0)=20;
-    C.sub(2,1)=15;
-    C.sub(2,2)=12;
-    cout << "C : " << endl << C << endl;
+//    cout << "prueba 2:" << endl;
+//
+//    Banda C=Banda(3,5);
+//    C.sub(0,0)=60;
+//    C.sub(0,1)=30;
+//    C.sub(0,2)=20;
+//    C.sub(1,0)=30;
+//    C.sub(1,1)=20;
+//    C.sub(1,2)=15;
+//    C.sub(2,0)=20;
+//    C.sub(2,1)=15;
+//    C.sub(2,2)=12;
+//    //cout << "C : " << endl << C << endl;
+//
+//    Matriz b_2= Matriz(3,1);
+//    b_2.sub(0,0)=180;
+//    b_2.sub(1,0)=115;
+//    b_2.sub(2,0)=86;
+//    //cout << "b : " <<  endl <<b_2 << endl;
+//
+//    cout << "C :" << endl << C << endl;
+//
+//    Banda L,U;
+//    C.descomposicionLU(L,U);
+//    C.descomposicionLU();
+//    cout << "C: " << endl << C << endl;
+//
+//
+    //Matriz x;
+    //C.resolverSistema_const(b_2,x);
+    //cout <<"x: " << endl << x << endl;
 
-    Matriz b_2= Matriz(3,1);
-    b_2.sub(0,0)=180;
-    b_2.sub(1,0)=115;
-    b_2.sub(2,0)=86;
-    cout << "b : " <<  endl <<b_2 << endl;
+    //cout << "C :" << endl << C << endl;
+    //C.resolverSistema(b_2,x);
+    //cout <<"x: " << endl << x << endl;
+
+
+
+//    //fuente: http://cicia.uprrp.edu/publicaciones/docentes/Factorizacion%20LU.pdf
+//    cout << "prueba 3:" << endl;
+
+    Banda D=Banda(4,7);
+    D.sub(0,0)=2;
+    D.sub(0,1)=3;
+    D.sub(0,2)=0;
+    D.sub(0,3)=1;
+    D.sub(1,0)=4;
+    D.sub(1,1)=5;
+    D.sub(1,2)=3;
+    D.sub(1,3)=3;
+    D.sub(2,0)=-2;
+    D.sub(2,1)=-6;
+    D.sub(2,2)=7;
+    D.sub(2,3)=7;
+    D.sub(3,0)=8;
+    D.sub(3,1)=9;
+    D.sub(3,2)=5;
+    D.sub(3,3)=21;
+    cout << "D :" << endl << D << endl;
+
+    Matriz b_3= Matriz(4,1);
+    b_3.sub(0,0)=1;
+    b_3.sub(1,0)=2;
+    b_3.sub(2,0)=3;
+    b_3.sub(3,0)=4;
+    cout << "b : " <<  endl <<b_3 << endl;
+
+//    Banda LL,UU;
+//    D.descomposicionLU(LL,UU);
+//    D.descomposicionLU();
+//    cout << "D: " << endl << D << endl;
 
     Matriz x;
-    C.resolverSistema(b_2,x);
-
-    cout <<"x: " << endl << x << endl;
-
+    D.resolverSistema(b_3,x);
+    cout << "x: " << endl << x << endl;
 
     return 0;
 }

@@ -1,0 +1,11 @@
+typeset -i i
+pgm=$1".awk"
+shift
+p=""
+i=1
+while [ $# -ne 0 ]; do
+  p=$p" -v p"$i"="$1
+  shift
+  i=$i+1
+done
+awk -f $pgm $p /dev/null

@@ -25,10 +25,15 @@ public:
         //pre: la matriz implicita tiene descomposicion LU sin pivoteo
         void descomposicionLU(Banda& L, Banda& U)const;
 
-        Matriz resolverSistema(const Matriz& b,Matriz& x) const;
+        void descomposicionLU();
+        void resolverTrigInf_aux(const Matriz& y,Matriz& z);
+
+
+        Matriz resolverSistema_const(const Matriz& b,Matriz& x) const;
         void resolverTrigSup(const Matriz& b,Matriz& y);
         void resolverTrigInf(const Matriz& y,Matriz& z);
 
+        Matriz resolverSistema(const Matriz& b, Matriz& x);
 
         friend std::ostream& operator<<(std::ostream& os, const Banda& B);
 

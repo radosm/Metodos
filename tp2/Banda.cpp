@@ -61,7 +61,6 @@ const Coef& Banda::sub(int i,int j)const{
 
 Coef& Banda::sub(int i,int j){
     //pre: estoy dentro de la banda (no quiero poder modificar los elementos fuera de la banda)
-    // cout << "i=" << i << " j=" <<j  << endl;
     assert(abs(i-j)<=(banda-1)/2);
 
     int indice=0;
@@ -122,7 +121,7 @@ Banda Id(int n,int banda){
 
 void Banda::descomposicionLU(Banda& L, Banda& U)const{
     U=*this;
-    L=Id(filas(),banda);
+    L=Id(tam,banda);
 
     // i es el i-esimo paso de la triangulación
     for (int i=0;i<filas();i++){
@@ -132,15 +131,36 @@ void Banda::descomposicionLU(Banda& L, Banda& U)const{
             Coef mult = U.sub(j,i) / U.sub(i,i);
             L.sub(j,i)=mult;
             for(int c=i;c<min(columnas(),i+k+1);c++){
-
                 U.sub(j,c) = U.sub(j,c) - mult * U.sub(i,c);
+            }
+        }
+    }
+
+}
+
+
+// pre: la matriz tiene descomposición LU sin pivoteo
+void Banda::descomposicionLU(){
+    // i es el i-esimo paso de la triangulación
+    for (int i=0;i<tam;i++){
+        int k=(banda-1)/2;
+        for(int j=i+1;j<min(tam,i+k+1);j++){
+        //fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
+            // por si la matriz tiene una columna de ceros en algún caso
+            if (sub(i,i)!=0){
+                Coef mult = sub(j,i) / sub(i,i);
+                sub(j,i)=mult;
+                for(int c=i+1;c<min(tam,i+k+1);c++){
+                    sub(j,c) = sub(j,c) - mult * sub(i,c);
+                }
             }
         }
     }
 }
 
 
-Matriz Banda::resolverSistema(const Matriz& b, Matriz& x) const{
+
+Matriz Banda::resolverSistema_const(const Matriz& b, Matriz& x) const{
     //tomo como pre que b sea vector columna
     assert(b.cantColms()==1);
     Banda L;
@@ -148,7 +168,6 @@ Matriz Banda::resolverSistema(const Matriz& b, Matriz& x) const{
 
     descomposicionLU(L,U);
     //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
-
 
     //resuelvo Ly=b  ----> obtengo y
     Matriz y;
@@ -159,6 +178,23 @@ Matriz Banda::resolverSistema(const Matriz& b, Matriz& x) const{
 
     return x;
 
+}
+
+Matriz Banda::resolverSistema(const Matriz& b, Matriz& x){
+    //tomo como pre que b sea vector columna
+    assert(b.cantColms()==1);
+
+    descomposicionLU();
+    //Tengo que resolver Ax=b --> (tengo PA=LU) es equivalente a resolver PAx=Pb  ---> LUx=Pb  ---> (P es de permutacion, su inversa es su traspuesta)  traspuesta(P)LU=b
+
+    //resuelvo Ly=b  ----> obtengo y
+    Matriz y;
+    resolverTrigInf_aux(b,y);
+
+    //resuelvo Ux=y
+    resolverTrigSup(y,x);
+
+    return x;
 }
 
 
@@ -207,6 +243,32 @@ void Banda::resolverTrigInf(const Matriz& y,Matriz& z){
         }
 
         z.sub(i,0)=z.sub(i,0)/sub(i,i);
+
+        //multiplicar columna
+        for(int f=i+1;f<min(filas(),i+k+1);f++){
+            sub(f,i)=sub(f,i)*z.sub(i,0);
+        }
+    }
+}
+
+void Banda::resolverTrigInf_aux(const Matriz& y,Matriz& z){
+    //Resuelve Matriz Implicita*z=y, asumiendo que la implicita es inversible y triangular Inferior
+    z=Matriz(y.cantFilas(),y.cantColms());
+    z=y;
+    //la diagonal no tiene ceros
+    for(int i=0;i<columnas();i++){
+        assert(sub(i,i)!=0);
+    }
+
+
+    for (int i=0;i<filas(); i++){
+        int k=(banda-1)/2;
+        for(int j=i-1;j>max(-1,i-(k+1));j--){
+            z.sub(i,0)=z.sub(i,0)-sub(i,j);
+        }
+
+        //Omito este paso porque la diagonal de L es 1
+        //z.sub(i,0)=z.sub(i,0)/sub(i,i);
 
         //multiplicar columna
         for(int f=i+1;f<min(filas(),i+k+1);f++){
