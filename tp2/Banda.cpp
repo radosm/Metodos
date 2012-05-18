@@ -2,12 +2,23 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+#include <set>
 
 #include "Banda.h"
 #include "matriz.h"
 
-
 using namespace std;
+
+void filaL(int& f1, int& f2, int c, int n, int m){
+  f1=m+c;
+  f2=1+c;
+
+  if ((f1>=0 && f1<m-1) || (f1%m)==0 || (f1%m)==(m-1) || (f1>=((n-1)*m) && f1<(n*m-1))){f1=-1;}
+  if ((f2>=0 && f2<m-1) || (f2%m)==0 || (f2%m)==(m-1) || (f2>=((n-1)*m) && f2<(n*m-1))){f2=-1;}
+  if (f1>n*m-1) f1=-1;
+  if (f2>n*m-1) f2=-1;
+}
 
 Banda::Banda(int tamanio, int nDiag){
     assert(nDiag>=1 and nDiag<=(2*tamanio-1));
@@ -141,6 +152,19 @@ void Banda::descomposicionLU(Banda& L, Banda& U)const{
 
 // pre: la matriz tiene descomposición LU sin pivoteo
 void Banda::descomposicionLU(){
+    vector< set<int> > CF(tam);
+    set<int>::iterator it;
+    int m=(banda-1)/2;
+    int n=tam/m;
+
+    // filas donde la columna i no es 0
+    int f1,f2;
+    for (int i=0;i<tam;i++) {
+      filaL(f1,f2,i,n,m);
+      if (f1!=-1) CF[i].insert(f1);
+      if (f2!=-1) CF[i].insert(f2);
+    }
+
     // i es el i-esimo paso de la triangulación
     for (int i=0;i<tam;i++){
         int k=(banda-1)/2;

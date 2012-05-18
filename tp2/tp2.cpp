@@ -1,13 +1,17 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cassert>
 #include "pgm.h"
 #include "matriz.h"
 #include "Banda.h"
 
 using namespace std;
 
-// Subindices de la matriz K
+//
+// Se pueden saber los valores de la matriz K sin necesidad de almacenarla
+// Igual no se gana nada porque es necesario el espacio para la fact LU
+//
 double Ksub(int i,int j,int n,int m, double lambda){
   // borde
   if ((i>=0 && i<m-1) || (i%m)==0 || (i%m)==(m-1) || (i>=((n-1)*m) && i<(n*m-1))){
@@ -19,6 +23,10 @@ double Ksub(int i,int j,int n,int m, double lambda){
   return 0;
 }
 
+
+//
+// MAIN
+//
 int main(int argc, char* argv[])
 {
   if (argc<4) {
@@ -30,22 +38,16 @@ int main(int argc, char* argv[])
   double lambda=atof(argv[2]);
   int fr=atoi(argv[3]);
 
-  Pgm I,J;
+  assert(lambda>0);
+  assert(fr >= 0 && fr <100);
+
+  Pgm I;
   I.load(archivo,fr); // Carga
 
   int n=I.height();
   int m=I.width();
   Banda K(n*m,2*m+1);
   Matriz b(n*m,1);
-
-  J=I; // copia la imagen
-
-  // Pone ruido en imagen I
-  for (int i=0;i<J.height();i+=5){
-    for (int j=0;j<J.width();j+=5){
-      I.sub(i,j)=0;
-    }
-  }
 
   // Arma sistema
   for (int f = 2; f<=n-1; f++){
@@ -78,55 +80,19 @@ int main(int argc, char* argv[])
   Matriz x(n*m,1);
   K.resolverSistema(b,x);
 
-  // Graba matriz K
-  ofstream f;
-/*
-  f.open("K.matriz");
-  for (int i=0;i<n*m;i++){
-    for (int j=0;j<n*m;j++){
-      f << K.sub(i,j) << " ";
-    }
-    f << endl;
-  }
-  f.close();
-  // Graba matriz K producida por Ksub
-  f.open("K.matriz.Ksub");
-  for (int i=0;i<n*m;i++){
-    for (int j=0;j<n*m;j++){
-      f << Ksub(i,j,n,m,lambda) << " ";
-    }
-    f << endl;
-  }
-  f.close();
-
-  // Graba vector b
-  f.open("b.vector");
-  for (int i=0;i<n*m;i++){
-      f << b.sub(i,0) << endl;
-  }
-  f.close();
-
-  // Graba dimensiones de la imagen
-  f.open("dimensiones");
-  f << n << " " << m << endl;
-  f.close();
-
-*/
-
   // Imagen filtrada
   int k=0;
-  for (int i=0;i<J.height();i++){
-    for (int j=0;j<J.width();j++){
+  for (int i=0;i<I.height();i++){
+    for (int j=0;j<I.width();j++){
       int gris=(int)x.sub(k++,0);
-      if (gris > J.maxval()) gris = J.maxval();
-      if (gris < 0) gris = 0;
-      J.sub(i,j)=(int)gris;
+      if (gris > I.maxval()) gris = I.maxval();  // Por si el resultado se
+      if (gris < 0) gris = 0;                    // va del rango [0,maxval]
+      I.sub(i,j)=(int)gris;
     }
   }
 
-  J.save("salida_reducido.pgm");
-  J.saveOrig("salida.pgm");
-  I.saveOrig("original.pgm");
+  I.save("salida_reducido.pgm");  // Graba la imagen filtrada reducida por fr
+  I.saveOrig("salida.pgm");       // Graba la imagen filtrada en tamaño original
 
   return 0;
 }
