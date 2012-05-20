@@ -45,8 +45,6 @@ public:
 
     void intercambiarFilas(int i, int j);
 
-    //Matriz resolverSistema(const Matriz& b,Matriz& x) const;
-
 private:
     int cantFils;
     int cantCols;

@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   int m=I.width();
 
   for(int i=0;i<n;i++){
-    for(int j=0;j<n;j++){
+    for(int j=0;j<m;j++){
       int gris=( (I.sub(i,j)/(double)I.maxval()) * (1+rand_normal()*sqrt(a)) )*I.maxval();
       if (gris > I.maxval()) gris = I.maxval();
       if (gris < 0) gris = 0;

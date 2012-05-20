@@ -1,0 +1,21 @@
+> ejecucion2
+for a in 64x64/blond.pgm 128x128/einstein.pgm 256x256/lena.pgm homero/Homer.pgm ## Shakespeare/ser-o-no-ser1.pgm
+do
+  asd=$(basename $a)
+
+  ./ruido_sp $a imagenes_con_ruido/sp_${asd} 0.002 0.998 
+  ./ruido_gauss $a imagenes_con_ruido/gauss_${asd} 0 0.01
+  ./ruido_speckle $a imagenes_con_ruido/speckle_${asd} 0.01
+
+  for ir in imagenes_con_ruido/sp_${asd} imagenes_con_ruido/gauss_${asd} imagenes_con_ruido/speckle_${asd}
+  do
+    for fr in 10 20 30 40 50 60 70 80 90
+    do
+      for lambda in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 10 50 100 1000
+      do
+         irsd=$(basename $ir)
+         ./filtrar_img $ir $lambda $fr imagenes_filtradas/${irsd}_${lambda}_${fr}
+      done
+    done
+  done
+done

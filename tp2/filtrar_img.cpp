@@ -1,6 +1,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <math.h>
 #include <cassert>
 #include "pgm.h"
 #include "matriz.h"
@@ -8,19 +10,28 @@
 
 using namespace std;
 
-//
-// Se pueden saber los valores de la matriz K sin necesidad de almacenarla
-// Igual no se gana nada porque es necesario el espacio para la fact LU
-//
-double Ksub(int i,int j,int n,int m, double lambda){
-  // borde
-  if ((i>=0 && i<m-1) || (i%m)==0 || (i%m)==(m-1) || (i>=((n-1)*m) && i<(n*m-1))){
-    if (i==j) return 1; else return 0;
-  } 
-  // fuera del borde
-  if (i==j) return 4+lambda;
-  if (j==(i-1) || j==(i+1) || j==(i+m) || j==(i-m)) return -1;
-  return 0;
+Coef ECM(const Matriz& A, const Matriz& B){
+    assert(A.cantFilas()==B.cantFilas());
+    assert(A.cantColms()==B.cantColms());
+
+    Coef acum=0;
+    for (int i=0; i<A.cantFilas();i++){
+        for(int j=0; j< A.cantColms();j++){
+            //acum+=(A.sub(i,j)-B.sub(i,j))^2
+            acum=acum+(A.sub(i,j)-B.sub(i,j))*(A.sub(i,j)-B.sub(i,j));
+        }
+    }
+
+    //N es la cantidad de pixeles de la imagen
+    int N=A.cantFilas()*A.cantColms();
+
+    return acum/N;
+}
+
+
+Coef PSNR(const Matriz& A, const Matriz&B){
+    Coef MAX=255;
+    return 10*log10(MAX*MAX/ECM(A,B));
 }
 
 
@@ -29,20 +40,33 @@ double Ksub(int i,int j,int n,int m, double lambda){
 //
 int main(int argc, char* argv[])
 {
-  if (argc<4) {
-    cerr << "Error, ingrese parametros: imagen, lambda, factor_reduccion\n";
+  if (argc<5) {
+    cerr << "Error, ingrese parametros: imagen, lambda, factor_reduccion, archivo_salida\n";
     exit(1);
   }
 
   char *archivo=argv[1];
   double lambda=atof(argv[2]);
   int fr=atoi(argv[3]);
+  char *archivo_salida=argv[4];
 
   assert(lambda>0);
   assert(fr >= 0 && fr <100);
 
-  Pgm I;
+  clock_t inicio, fin;
+ 
+  inicio=clock();
+  Pgm I,I_sr;
   I.load(archivo,fr); // Carga
+  I_sr.load(archivo); // Carga
+
+  Matriz Orig(I_sr.height(),I_sr.width());
+
+  for (int i=0; i<I_sr.height(); i++){
+    for (int j=0; j<I_sr.width(); j++){
+      Orig.sub(i,j)=I_sr.sub(i,j);
+    }
+  }
 
   int n=I.height();
   int m=I.width();
@@ -77,9 +101,9 @@ int main(int argc, char* argv[])
     b.sub((f-1)*m+m -1,0) = I.sub(f -1,m -1);
   }
 
+
   Matriz x(n*m,1);
-  //K.resolverSistema(b,x);
-  K.resolverGauss(b,x);
+  K.resolverSistema(b,x);
 
   // Imagen filtrada
   int k=0;
@@ -92,8 +116,24 @@ int main(int argc, char* argv[])
     }
   }
 
-  I.save("salida_reducido.pgm");  // Graba la imagen filtrada reducida por fr
-  I.saveOrig("salida.pgm");       // Graba la imagen filtrada en tamaño original
+  Pgm I_filtrada_sr;
+  I_filtrada_sr.resizeOrig(I);
+  I_filtrada_sr.save(archivo_salida);
+  I.saveOrig(archivo_salida);       // Graba la imagen filtrada en tamaño original
+
+  Matriz Filt(I_filtrada_sr.height(),I_filtrada_sr.width());
+
+  for (int i=0; i<I_sr.height(); i++){
+    for (int j=0; j<I_filtrada_sr.width(); j++){
+      Filt.sub(i,j)=I_filtrada_sr.sub(i,j);
+    }
+  }
+
+  Coef psnr=PSNR(Orig,Filt);
+  fin=clock();
+  double segundos=(double)fin/CLOCKS_PER_SEC;
+
+  cout << n << "x" << m << " " << fr << " " << lambda << " " << segundos << " " << psnr << endl;
 
   return 0;
 }

@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   double a=atof(argv[3]);
   double b=atof(argv[4]);
 
-  assert (a>0 && b>0);
+  assert (b>=0);
 
   Pgm I;
   I.load(archivo); // Carga
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   int m=I.width();
 
   for(int i=0;i<n;i++){
-    for(int j=0;j<n;j++){
+    for(int j=0;j<m;j++){
       int gris=(I.sub(i,j)/(double)I.maxval()+rand_normal()*sqrt(b)+a)*I.maxval();
       if (gris > I.maxval()) gris = I.maxval();
       if (gris < 0) gris = 0;

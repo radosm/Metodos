@@ -183,12 +183,38 @@ void Pgm::saveOrig(const char* archivo){
     f.close();
 }
 
+void Pgm::resizeOrig(Pgm& I) {
+    int ho, wo;
+    ho=I.HeightOrig;
+    wo=I.WidthOrig;
+    vector< vector<int> > RasterTemp=vector< vector<int> >(ho, vector<int>(wo,0));
+
+    double x_ratio = I.Height/(double)I.HeightOrig ;
+    double y_ratio = I.Width/(double)I.WidthOrig ;
+    double px, py ; 
+
+    for (int i=0;i<I.HeightOrig;i++) {
+        for (int j=0;j<I.WidthOrig;j++) {
+            px = floor(j*x_ratio) ;
+            py = floor(i*y_ratio) ;
+            RasterTemp[i][j] = I.sub((int)py,(int)px);
+        }
+    }
+
+    Width=I.WidthOrig;
+    Height=I.HeightOrig;
+    WidthOrig=I.WidthOrig;
+    HeightOrig=I.HeightOrig;
+    Maxval=I.Maxval;
+    Raster=RasterTemp;
+
+}
+
 int Pgm::width(){ return Width; }
 int Pgm::width_orig(){ return WidthOrig; }
 int Pgm::height(){ return Height; }
 int Pgm::height_orig(){ return HeightOrig; }
 int Pgm::maxval(){ return Maxval; }
-
 int Pgm::sub(int i,int j) const{
     assert (i>=0 && i<Height);
     assert (j>=0 && j<Width);

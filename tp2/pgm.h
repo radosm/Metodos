@@ -21,6 +21,7 @@ public:
     void load(const char* archivo, int fr);  // Carga la imagen con un factor de reduccion, tamaño-(100-fr)%
     void save(const char* archivo);          // Graba en tamaño reducido
     void saveOrig(const char* archivo);      // Graba en tamaño original
+    void resizeOrig(Pgm& I);                 // Toma la imagen I y la devuelve a su tamaño original
     void operator=(const Pgm& I);
 
     int width();

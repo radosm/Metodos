@@ -5,7 +5,6 @@
 
 #include "matriz.h"
 
-
 using namespace std;
 
 Matriz::Matriz(int m, int n){
@@ -265,30 +264,3 @@ int Matriz::cantFilas()const{
 int Matriz::cantColms()const{
     return cantCols;
 }
-
-//Matriz Matriz::operator*(const Banda& B)const{
-//    assert(cantCols==B.filas());
-//    Matriz C=Matriz(cantFils,B.columnas());
-//    //defino a(i,j)
-//    int d=(B.cantDiag()-1)/2;
-//    for (int i=0; i<cantFils; i++){
-//        for(int j=0;j<B.columnas();j++){
-//            //solo hay elementos no nulos en la banda
-//            for(int k=max(0,j-d);k<min(cantCols,j+d);k++){
-//                C.sub(i,j)=C.sub(i,j)+sub(i,k)*B.sub(k,j);
-//            }
-//        }
-//    }
-//    return C;
-//}
-
-
-
-
-
-
-
-
-//        cout << "b(" << i+1 << ") :" << y.sub(i,0) << endl;
-
-//        cout << "b(" << i+1 << ") :" << y.sub(i,0)  << " (antes de dividir)"<< endl;

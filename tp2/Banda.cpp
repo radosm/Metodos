@@ -287,7 +287,7 @@ void Banda::resolverGauss(Matriz& b, Matriz& x){
   // i es el i-esimo paso de la triangulación
   int k=(banda-1)/2;
   for (int i=0;i<tam;i++){
-    for(int j=i+1;j<min(tam,i+k+1);j++){   //fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
+    for(int j=i+1;j<min(tam,i+k+1);j++){   // fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
       if (sub(j,i)!=0){
         Coef mult = sub(j,i) / sub(i,i);
         sub(j,i)=mult;
