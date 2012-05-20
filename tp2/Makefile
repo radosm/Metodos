@@ -1,6 +1,6 @@
 export LC_ALL=C
 
-CXXFLAGS=
+CXXFLAGS=-O3
 LDFLAGS=
 
 ALL=tp2 ruido_gauss ruido_sp ruido_speckle

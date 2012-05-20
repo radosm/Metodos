@@ -36,7 +36,7 @@ Banda::Banda(int tamanio, int nDiag){
 
 }
 
-inline const Coef Banda::sub(int i,int j)const{
+const Coef Banda::sub(int i,int j)const{
     // si estoy fuera de la banda
     if (abs(i-j)>(banda-1)/2){
         return cero;
@@ -59,7 +59,7 @@ inline const Coef Banda::sub(int i,int j)const{
 }
 
 
-inline Coef& Banda::sub(int i,int j){
+Coef& Banda::sub(int i,int j){
     //pre: estoy dentro de la banda (no quiero poder modificar los elementos fuera de la banda)
     assert(abs(i-j)<=(banda-1)/2);
 

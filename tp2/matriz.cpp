@@ -51,13 +51,13 @@ ostream& operator<<(ostream& os, const Matriz& A){
 }
 
 
-inline Coef& Matriz::sub(int i,int j){
+Coef& Matriz::sub(int i,int j){
     assert (i>=0 && i<cantFils);
     assert (j>=0 && j<cantCols);
     return valores[i][j];
 }
 
-inline const Coef Matriz::sub(int i,int j) const {
+const Coef Matriz::sub(int i,int j) const {
     assert (i>=0 && i<cantFils);
     assert (j>=0 && j<cantCols);
     return valores[i][j];

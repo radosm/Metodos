@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <cassert>
 #include "pgm.h"
 
 using namespace std;
@@ -44,6 +45,8 @@ int main(int argc, char* argv[])
   char *archivosal=argv[2];
   double a=atof(argv[3]);
   double b=atof(argv[4]);
+
+  assert (a>0 && b>0);
 
   Pgm I;
   I.load(archivo); // Carga
