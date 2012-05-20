@@ -78,7 +78,8 @@ int main(int argc, char* argv[])
   }
 
   Matriz x(n*m,1);
-  K.resolverSistema(b,x);
+  //K.resolverSistema(b,x);
+  K.resolverGauss(b,x);
 
   // Imagen filtrada
   int k=0;

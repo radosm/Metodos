@@ -37,7 +37,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Matriz& A);
 
     Coef& sub(int i,int j);
-    const Coef& sub(int i,int j) const;
+    const Coef sub(int i,int j) const;
 
     void descomposicionPLU(Matriz& L, Matriz& U, Matriz& P)const;
 

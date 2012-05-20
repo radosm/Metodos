@@ -19,7 +19,7 @@ public:
         int filas()const;
         int columnas()const;
 
-        const Coef& sub(int i,int j)const;
+        const Coef sub(int i,int j)const;
         Coef& sub(int i,int j);
 
         //pre: la matriz implicita tiene descomposicion LU sin pivoteo
@@ -34,6 +34,7 @@ public:
         void resolverTrigInf(const Matriz& y,Matriz& z);
 
         Matriz resolverSistema(const Matriz& b, Matriz& x);
+        void resolverGauss(Matriz& b, Matriz& x);
 
         friend std::ostream& operator<<(std::ostream& os, const Banda& B);
 

@@ -3,22 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
-#include <set>
 
 #include "Banda.h"
 #include "matriz.h"
 
 using namespace std;
-
-void filaL(int& f1, int& f2, int c, int n, int m){
-  f1=m+c;
-  f2=1+c;
-
-  if ((f1>=0 && f1<m-1) || (f1%m)==0 || (f1%m)==(m-1) || (f1>=((n-1)*m) && f1<(n*m-1))){f1=-1;}
-  if ((f2>=0 && f2<m-1) || (f2%m)==0 || (f2%m)==(m-1) || (f2>=((n-1)*m) && f2<(n*m-1))){f2=-1;}
-  if (f1>n*m-1) f1=-1;
-  if (f2>n*m-1) f2=-1;
-}
 
 Banda::Banda(int tamanio, int nDiag){
     assert(nDiag>=1 and nDiag<=(2*tamanio-1));
@@ -47,7 +36,7 @@ Banda::Banda(int tamanio, int nDiag){
 
 }
 
-const Coef& Banda::sub(int i,int j)const{
+inline const Coef Banda::sub(int i,int j)const{
     // si estoy fuera de la banda
     if (abs(i-j)>(banda-1)/2){
         return cero;
@@ -70,7 +59,7 @@ const Coef& Banda::sub(int i,int j)const{
 }
 
 
-Coef& Banda::sub(int i,int j){
+inline Coef& Banda::sub(int i,int j){
     //pre: estoy dentro de la banda (no quiero poder modificar los elementos fuera de la banda)
     assert(abs(i-j)<=(banda-1)/2);
 
@@ -152,32 +141,21 @@ void Banda::descomposicionLU(Banda& L, Banda& U)const{
 
 // pre: la matriz tiene descomposición LU sin pivoteo
 void Banda::descomposicionLU(){
-    vector< set<int> > CF(tam);
-    set<int>::iterator it;
-    int m=(banda-1)/2;
-    int n=tam/m;
-
-    // filas donde la columna i no es 0
-    int f1,f2;
-    for (int i=0;i<tam;i++) {
-      filaL(f1,f2,i,n,m);
-      if (f1!=-1) CF[i].insert(f1);
-      if (f2!=-1) CF[i].insert(f2);
-    }
-
     // i es el i-esimo paso de la triangulación
+    int k=(banda-1)/2;
     for (int i=0;i<tam;i++){
-        int k=(banda-1)/2;
         for(int j=i+1;j<min(tam,i+k+1);j++){
         //fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
             // por si la matriz tiene una columna de ceros en algún caso
-            if (sub(i,i)!=0){
-                Coef mult = sub(j,i) / sub(i,i);
-                sub(j,i)=mult;
-                for(int c=i+1;c<min(tam,i+k+1);c++){
-                    sub(j,c) = sub(j,c) - mult * sub(i,c);
+//            if (sub(i,i)!=0){
+                if (sub(j,i)!=0){
+                  Coef mult = sub(j,i) / sub(i,i);
+                  sub(j,i)=mult;
+                  for(int c=i+1;c<min(tam,i+k+1);c++){
+                      sub(j,c) = sub(j,c) - mult * sub(i,c);
+                  }
                 }
-            }
+//            }
         }
     }
 }
@@ -233,8 +211,8 @@ void Banda::resolverTrigSup(const Matriz& b,Matriz& y){
         assert(sub(i,i)!=0);
     }
 
+    int k=(banda-1)/2;
     for (int i=filas()-1;i>-1; i--){
-        int k=(banda-1)/2;
         for(int j=i+1;j<min(columnas(),i+k+1);j++){
             y.sub(i,0)=y.sub(i,0)-sub(i,j);
         }
@@ -260,8 +238,8 @@ void Banda::resolverTrigInf(const Matriz& y,Matriz& z){
     }
 
 
+    int k=(banda-1)/2;
     for (int i=0;i<filas(); i++){
-        int k=(banda-1)/2;
         for(int j=i-1;j>max(-1,i-(k+1));j--){
             z.sub(i,0)=z.sub(i,0)-sub(i,j);
         }
@@ -285,8 +263,8 @@ void Banda::resolverTrigInf_aux(const Matriz& y,Matriz& z){
     }
 
 
+    int k=(banda-1)/2;
     for (int i=0;i<filas(); i++){
-        int k=(banda-1)/2;
         for(int j=i-1;j>max(-1,i-(k+1));j--){
             z.sub(i,0)=z.sub(i,0)-sub(i,j);
         }
@@ -300,4 +278,26 @@ void Banda::resolverTrigInf_aux(const Matriz& y,Matriz& z){
         }
     }
 
+}
+
+
+
+// pre: la matriz tiene descomposición LU sin pivoteo
+void Banda::resolverGauss(Matriz& b, Matriz& x){
+  // i es el i-esimo paso de la triangulación
+  int k=(banda-1)/2;
+  for (int i=0;i<tam;i++){
+    for(int j=i+1;j<min(tam,i+k+1);j++){   //fila j (j>i) ---> fila j-a(j,i)/a(i,i)*fila(i)
+      if (sub(j,i)!=0){
+        Coef mult = sub(j,i) / sub(i,i);
+        sub(j,i)=mult;
+        for(int c=i+1;c<min(tam,i+k+1);c++){
+          sub(j,c) = sub(j,c) - mult * sub(i,c);
+        }
+        b.sub(j,0) = b.sub(j,0) - mult * b.sub(i,0);
+      }
+    }
+  }
+
+  resolverTrigSup(b,x);
 }
