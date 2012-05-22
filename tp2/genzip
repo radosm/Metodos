@@ -1,0 +1,2 @@
+rm -f tp2_orduna_rados.zip
+zip tp2_orduna_rados.zip README Banda.cpp filtrar_img.cpp Makefile matriz.h pgm.h psnr.cpp ruido_sp.cpp Banda.h matriz.cpp pgm.cpp ruido_gauss.cpp ruido_speckle.cpp
