@@ -1,4 +1,4 @@
-xport LC_ALL=C
+export LC_ALL=C
 
 CXXFLAGS=-O3
 LDFLAGS=
