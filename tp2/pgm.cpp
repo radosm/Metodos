@@ -128,7 +128,7 @@ void Pgm::save(const char* archivo){
     f << "# Grabado por clase Pgm de Elisa y Martin!" << endl;
     f << Width << endl;
     f << Height << endl;
-    f << Maxval << '\n'; // acá no va endl por el p... windows
+    f << Maxval << '\n';
 
     for(int i=0;i<Height;i++){
       for(int j=0;j<Width;j++){

@@ -1,6 +1,6 @@
 > salida_ejecucion
 ##for a in 64x64/blond.pgm 128x128/einstein.pgm ## 256x256/lena.pgm ## homero/Homer.pgm ## Shakespeare/ser-o-no-ser1.pgm
-for a in 256x256/lena.pgm ## homero/Homer.pgm ## Shakespeare/ser-o-no-ser1.pgm
+for a in homero/Homer.pgm ## Shakespeare/ser-o-no-ser1.pgm
 do
   asd=$(basename $a)
   
@@ -20,7 +20,7 @@ do
     echo $irsd >> salida_ejecucion
     echo >> salida_ejecucion
     
-    for fr in 0 25 50 75 90
+    for fr in 0 20 40 60 80
     do
       for lambda in 0.2 0.4 0.6 0.8 1 10
       do
