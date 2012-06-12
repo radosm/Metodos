@@ -4,9 +4,7 @@
 #include <vector>
 #include <iostream>
 
-
-typedef double Coef; //para zafar hacer un template
-
+#include "Coef.h"
 
 
 class Matriz{
@@ -34,6 +32,8 @@ public:
     Coef& sub(int i,int j);
     const Coef& sub(int i,int j) const;
 
+    void factorizacion_QR(Matriz& Q,Matriz& R)const;
+
 
 private:
     int cantFils;
@@ -47,11 +47,14 @@ private:
     //me devuelve una copia de la fila
     Matriz fila(int i) const;
 
+    void Givens_aux(int i,int j,Matriz& Q);
+
 
 };
 
 
 Matriz operator*(Coef k,const Matriz& A);
+Matriz Id(int n);
 
 
 

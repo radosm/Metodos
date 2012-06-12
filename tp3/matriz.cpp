@@ -115,11 +115,38 @@ Matriz Matriz::operator-(const Matriz& B) const{
 }
 
 
-
 int Matriz::cantFilas()const{
     return cantFils;
 }
 
+
 int Matriz::cantColms()const{
     return cantCols;
 }
+
+
+void Matriz::factorizacion_QR(Matriz& Q,Matriz& R)const{
+  Q=Id(cantFilas());
+  R=*this;
+
+  for(int i=0; i<min(cantFilas(),cantColms())-1;i++){
+    //limpio columna i
+    for (int j=i+1;j<cantColms();j++){
+        R.Givens_aux(i,j,Q);
+    }
+  }
+}
+
+void Matriz::Givens_aux(int i,int j,Matriz& Q){
+
+}
+
+
+Matriz Id(int n){
+    Matriz I=Matriz(n,n);
+    for (int i=0; i<n; i++){
+        I.sub(i,i)=1;
+    }
+    return I;
+}
+
