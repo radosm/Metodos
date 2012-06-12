@@ -11,8 +11,8 @@ class Givens{
 
 
 
-    // crea una nueva matriz donde guarda el producto; más adelante se puede mejorar pisando la matriz B
-    Matriz operator*(const Matriz& B) const;
+    // Guarda el resultado de la multiplicación en la matriz B
+    void operator*(Matriz& B) const;
 
 
 
@@ -25,8 +25,6 @@ class Givens{
     Coef x_2;
 
 };
-
-
 
 
 
