@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "matriz.h"
+#include "Matriz_Givens.h"
 
 
 using namespace std;
@@ -132,7 +133,13 @@ void Matriz::factorizacion_QR(Matriz& Q,Matriz& R)const{
   for(int i=0; i<min(cantFilas(),cantColms())-1;i++){
     //limpio columna i
     for (int j=i+1;j<cantColms();j++){
-        R.Givens_aux(i,j,Q);
+        // Multiplico por la matriz G(i,j)
+        Givens G=Givens(i,j,R.sub(i,i),R.sub(j,i),R.cantColms());
+        G*R;
+        // Me falta multiplicar Q por G cada vez
+        // También quiero guardar un bit para trasponer o no, haría que cambiar sub para que devuelva sub(i,j) si no está el bit encenddo, si no que devleva sub(j,i)
+        acá tengo cosas sin hacer
+        //R.Givens_aux(i,j,Q);
     }
   }
 }
