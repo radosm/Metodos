@@ -220,6 +220,8 @@ void Matriz::autoval_autovect(Matriz& Qac, Matriz& Dant)const{
         A=R*Q;
         Qac=Qac*Q;
         Dant=D;
+	//D=diag(A)
+	for(int i=0;i<cantDiag;i++) D.sub(i,0)=A.sub(i,i);
         iter++;
     }
     // Los autovalores se almacenan en Dant y los autovectores en Qac
