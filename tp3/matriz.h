@@ -25,7 +25,7 @@ public:
     int cantFilas()const;
     int cantColms()const;
 
-
+    void trasponer();
 
     friend std::ostream& operator<<(std::ostream& os, const Matriz& A);
 
@@ -34,10 +34,13 @@ public:
 
     void factorizacion_QR(Matriz& Q,Matriz& R)const;
 
+    void autoval_autovect(Matriz& Qac, Matriz& Dant)const;
+
 
 private:
     int cantFils;
     int cantCols;
+    bool traspuesta;
 
     std::vector<std::vector<Coef> > valores;
 
@@ -46,9 +49,6 @@ private:
 
     //me devuelve una copia de la fila
     Matriz fila(int i) const;
-
-    void Givens_aux(int i,int j,Matriz& Q);
-
 
 };
 

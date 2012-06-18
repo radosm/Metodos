@@ -18,6 +18,8 @@ class Givens{
 
     int tamanio() const;
 
+    void trasponer();
+
   private:
     int tam;
     int i;
@@ -27,6 +29,6 @@ class Givens{
 
 };
 
-
+void operator*(Matriz& A,const Givens& G);
 
 #endif

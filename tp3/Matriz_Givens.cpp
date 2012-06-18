@@ -39,8 +39,8 @@ void Givens::operator*(Matriz& B)const{
   }
 
   for (int p=0; p<B.cantColms();p++){
-    B.sub(i,p)=x_1*fila_i.sub(0,p)-x_2*fila_j.sub(0,p);
-    B.sub(j,p)=x_2*fila_i.sub(0,p)+x_1*fila_j.sub(0,p);
+    B.sub(i,p)=x_1*fila_i.sub(0,p)+x_2*fila_j.sub(0,p);
+    B.sub(j,p)=-x_2*fila_i.sub(0,p)+x_1*fila_j.sub(0,p);
   }
 }
 
@@ -53,3 +53,17 @@ std::ostream& operator<<(std::ostream& os, const Givens& G){
 }
 
 
+
+void Givens::trasponer(){
+    x_2=-x_2;
+}
+
+void operator*(Matriz& A,const Givens& G){
+    //el producto G*A, lo almaceno en A
+    // Hago G_traspuesta * A traspuesta, y después traspongo
+    Givens aux=G;
+    aux.trasponer();
+    A.trasponer();
+    aux*A;
+    A.trasponer();
+}
