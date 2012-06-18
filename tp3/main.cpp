@@ -28,7 +28,7 @@ int main()
     cout << "A : "<< endl << A << endl;
     //A.trasponer();
     //cout << "A traspuesta: " << endl << A << endl;
-    Matriz B=Id(5);
+    Matriz B=Id(15)*5;
     Matriz Qac;
     Matriz Dant;
     B.autoval_autovect(Qac,Dant);

@@ -36,13 +36,13 @@ Matriz Matriz::operator+(const Matriz& B) const{
 
 
 ostream& operator<<(ostream& os, const Matriz& A){
-    os << "[";
+    os << "[ ";
     for (int i=0; i < A.cantFils; i++){
         if (i>0){
-            os << " ";
+            os << "  ";
         }
         for (int j=0; j<A.cantCols;j++){
-            os << A.sub(i,j) << ", ";
+            os << A.sub(i,j) << ((j==(A.cantCols-1))?" ":", ");
         }
         if (i==A.cantFils-1){
               os << "]";
