@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <iostream>
 
 #include "matriz.h"
 #include "Matriz_Givens.h"

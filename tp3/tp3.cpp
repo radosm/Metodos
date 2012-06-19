@@ -82,10 +82,11 @@ int main(int argc, char* argv[])
     if (i>0) {
       MK.sub(i,i-1)=k[i]/div;  
     }
-    MK.sub(i,i)=-k[i]/div;
     if (i<n-1) {
       MK.sub(i,i)=(-k[i]-k[i+1])/div;
       MK.sub(i,i+1)=k[i+1]/div;
+    } else {
+      MK.sub(i,i)=-k[i]/div;
     }
   }
 
