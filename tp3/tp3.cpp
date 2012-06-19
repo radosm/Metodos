@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <cassert>
+#include <math.h>
 #include "matriz.h"
+#include "Coef.h"
 
 using namespace std;
 
@@ -33,11 +35,11 @@ int main(int argc, char* argv[])
   assert(f);
 
   int n;
-  double m0,ml,mp;
+  Coef m0,ml,mp;
   f >> n >> m0 >> ml >> mp;
   assert(n>0 && m0>0 && ml>0 && mp>0);
 
-  vector<double> k(n);
+  vector<Coef> k(n);
   for(int i=0;i<n;i++){
     f>>k[i];
   }
@@ -90,7 +92,21 @@ int main(int argc, char* argv[])
     }
   }
 
-  cout << MK;
+  Matriz Qac;
+  Matriz Dant;
+  MK.autoval_autovect(Qac,Dant);
+
+  cout << endl;
+
+  cout << MK << endl;
+
+  cout << Qac << endl;
+
+  cout << Dant << endl;
+
+  vector<Coef> w(Dant.cantFilas());
+  for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,0));
+  for (int i=0;i<Dant.cantFilas();i++) cout << "w[" << i << "]=" << w[i] << endl;
 
   fin=clock();
   double segundos=(double)fin/CLOCKS_PER_SEC;
