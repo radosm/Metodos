@@ -183,6 +183,19 @@ Coef modulo(Coef x){
     }
 }
 
+Coef falsa_norma(const Matriz& A){
+    Coef suma_aux=0;
+
+    for (int i=0; i<A.cantFilas();i++){
+        for (int j=0;j<A.cantColms();j++){
+            //ojo que abs sólo funciona con double, long double y float!
+            suma_aux+=modulo(A.sub(i,j));
+        }
+    }
+
+    return suma_aux;
+}
+
 Coef norma1(const Matriz& A){
     //norma uno es la "fila que más suma"
     Coef suma_max=0;
@@ -207,22 +220,27 @@ void Matriz::autoval_autovect(Matriz& Qac, Matriz& Dant)const{
     Qac=Id(A.cantFilas());
 
     int cantDiag=min(cantColms(),cantFilas());
-    Dant=Matriz(cantDiag,1);
+    Dant=Matriz(cantDiag,cantDiag);
+
     //Dant=diag(A)
-    for(int k=0;k<Dant.cantColms();k++){ Dant.sub(k,0)= A.sub(k,k); }
+    //for(int k=0;k<Dant.cantColms();k++){ Dant.sub(k,0)= A.sub(k,k); }
+    Dant=A;
 
     //inicializo D como el vector nulo
-    Matriz D=Matriz(cantDiag,1);
+    Matriz D=Matriz(cantDiag,cantDiag);
 
     Matriz Q;
     Matriz R;
-    while(norma1(Dant-D)>max_tolerancia && iter<max_iter){
+    while(falsa_norma(Dant-D)>max_tolerancia && iter<max_iter){
         A.factorizacion_QR(Q,R);
         A=R*Q;
         Qac=Qac*Q;
         Dant=D;
+
 	//D=diag(A)
-	for(int i=0;i<cantDiag;i++) D.sub(i,0)=A.sub(i,i);
+	//for(int i=0;i<cantDiag;i++) D.sub(i,0)=A.sub(i,i);
+        D=A;
+
         iter++;
     }
     // Los autovalores se almacenan en Dant y los autovectores en Qac

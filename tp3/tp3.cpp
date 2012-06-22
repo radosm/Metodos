@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
   cout << Dant << endl;
 
   vector<Coef> w(Dant.cantFilas());
-  for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,0));
+  for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
   for (int i=0;i<Dant.cantFilas();i++) cout << "w[" << i << "]=" << w[i] << endl;
 
   fin=clock();
