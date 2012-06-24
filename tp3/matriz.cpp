@@ -214,7 +214,7 @@ Coef norma1(const Matriz& A){
 
 void Matriz::autoval_autovect(Matriz& Qac, Matriz& Dant)const{
     int max_iter=2000;
-    int max_tolerancia=0.001;
+    double max_tolerancia=0.0000001;
     int iter=1;
     Matriz A=*this;
     Qac=Id(A.cantFilas());

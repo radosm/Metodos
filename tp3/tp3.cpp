@@ -96,12 +96,14 @@ int main(int argc, char* argv[])
   Matriz Dant;
   MK.autoval_autovect(Qac,Dant);
 
+/*
   cout << endl;
 
   cout << MK << endl;
 
   cout << Qac << endl;
 
+*/
   cout << Dant << endl;
 
   vector<Coef> w(Dant.cantFilas());
