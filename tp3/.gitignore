@@ -1,4 +1,5 @@
 tp3
+tp3-martin
 main
 *.o
-prueba*.txt
+.*.swp
