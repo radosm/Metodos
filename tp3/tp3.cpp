@@ -103,16 +103,18 @@ int main(int argc, char* argv[])
 
   cout << Qac << endl;
 
-*/
   cout << Dant << endl;
+*/
+  cout << endl;
 
   vector<Coef> w(Dant.cantFilas());
   for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
-  for (int i=0;i<Dant.cantFilas();i++) cout << "w[" << i << "]=" << w[i] << endl;
+  for (int i=0;i<Dant.cantFilas();i++) cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
 
   fin=clock();
   double segundos=(double)fin/CLOCKS_PER_SEC;
 
+  cout << endl;
   cout << "Tiempo ejecucion: " << segundos << " segundos." << endl;
 
   return 0;
