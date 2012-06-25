@@ -72,6 +72,48 @@ int main(int argc, char* argv[])
   cout << endl;
 */
 
+	
+
+/*	
+  //Para test 10
+  p[7]+=p[8]+p[9];
+  p[8]=0;
+  p[9]=0;
+  l[7]+=l[8]+l[9];
+  l[8]=0;
+  l[9]=0;
+  p[6]-=6;
+  p[7]+=6;
+*/
+
+/*
+
+  //para test3:
+  for (int i=0;i<50;i++){	
+    p[1]--;
+    p[0]++;
+  }
+
+  for (int i=0;i<5;i++){	
+    l[1]--;
+    l[0]++;
+  }
+*/
+
+/*
+
+  // para test 5
+p[3]+=p[4];
+p[3]=0;
+l[3]+=l[4];
+l[3]=0;
+p[1]-=40;
+p[2]+=40;
+*/
+
+
+
+
   //
   // Arma matriz MK=inv(M)*K
   //
@@ -109,7 +151,9 @@ int main(int argc, char* argv[])
 
   vector<Coef> w(Dant.cantFilas());
   for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
-  for (int i=0;i<Dant.cantFilas();i++) cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
+  for (int i=0;i<Dant.cantFilas();i++) cout << "lambda[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
+  for (int i=0;i<n;i++) cout << "l_fin[" << i << "]=" << l[i] << " / p_fin[" << i << "]=" << p[i] << endl;
+
 
   fin=clock();
   double segundos=(double)fin/CLOCKS_PER_SEC;
