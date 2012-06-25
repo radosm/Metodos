@@ -14,13 +14,17 @@ void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> &l, vector
   for(int c=1;c < 11;c++){
     int cl=0;
     int cp=c;
-    while (m.size()<=50){
+    while (m.size()<=c*n){
       for (int i=0;i<=cl;i++){
         for (int j=cp;i>=0;j--){
           for (int x=0;x<=i;x++){
             int ps=0;
 	    int pp=0;
             while (ps==pp || l[ps]==0) { ps=rand()%n; int pp=rand()%n; }
+            cout << " x=" << x
+                 << " ps=" << ps
+                 << " pp=" << pp
+                 << endl;
             l[ps]--;
             l[pp]++;
 	  }
@@ -28,6 +32,10 @@ void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> &l, vector
             int ps=0;
 	    int pp=0;
             while (ps==pp || p[ps]==0) { ps=rand()%n; int pp=rand()%n; }
+            cout << " x=" << x
+                 << " ps=" << ps
+                 << " pp=" << pp
+                 << endl;
             p[ps]--;
             p[pp]++;
 	  }
@@ -37,6 +45,10 @@ void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> &l, vector
         v[i]=1/(m0+ml*l[i]+mp*p[i]);
       }
       m.insert(v);
+      cout <<  "cl=" << cl
+           << " cp=" << cp
+           << " m.size()=" << m.size()
+           << endl;
     }
     P.push_back(m);
   }

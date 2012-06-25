@@ -7,6 +7,7 @@
 #include <math.h>
 #include "matriz.h"
 #include "Coef.h"
+#include "heuristicas.h"
 
 using namespace std;
 
@@ -75,6 +76,10 @@ int main(int argc, char* argv[])
   //
   // Arma matriz MK=inv(M)*K
   //
+
+  vector< SetPruebas > P(10);
+  h1(n,m0,ml,mp,k,l,p,P);
+
   Matriz MK(n,n);
   
   for(int i=0;i<n;i++){

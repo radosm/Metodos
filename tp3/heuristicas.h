@@ -9,4 +9,6 @@ using namespace std;
 
 typedef set < vector<Coef> > SetPruebas;
 
+void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> &l, vector<int> &p, vector< SetPruebas > &P);
+
 #endif
