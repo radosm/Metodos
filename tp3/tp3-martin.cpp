@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <cassert>
+#include <vector>
 #include <math.h>
 #include "matriz.h"
 #include "Coef.h"
@@ -33,6 +34,7 @@ int main(int argc, char* argv[])
   // Lee datos de entrada
   //
   ifstream f;
+  ofstream f_salida;
   f.open(archivo_entrada);
   assert(f);
 
@@ -57,34 +59,21 @@ int main(int argc, char* argv[])
   }
   f.close();
 
-  // Muestra datos de entrada
-//  cout << "n: "<<n<<" m0: "<<m0<<" ml: "<<ml<<" mp: "<<mp<<endl;
-  //for(int i=0;i<n;i++){
-    //cout << setprecision(15) << k[i] << " ";
-  //}
-  //cout << endl;
-  //for(int i=0;i<n;i++){
-    //cout << l[i] << " ";
-  //}
-  //cout << endl;
-  //for(int i=0;i<n;i++){
-    //cout << p[i] << " ";
-  //}
-  //cout << endl;
-
   //
   // Arma matriz MK=inv(M)*K
   //
 
-  vector< vector <Coef> > P;
+  vector< vector < Piso > > P;
+
+  // Calcula set de pruebas de heurística 1
   h1(n,m0,ml,mp,k,l,p,P);
 
   Matriz MK(n,n);
   
   for(int c=0;c<P.size();c++){
-    if (!c%10) cout << ".";
+    if (!(c%10)) cout << "." << flush;
     for(int i=0;i<n;i++){
-      float div=P[c][i]; // div es el coeficiente de M (M es diagonal)
+      float div=m0+P[c][i].l*ml+P[c][i].p*mp; // div es el coeficiente de M (M es diagonal)
   
       // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
       if (i>0) {
@@ -109,24 +98,27 @@ int main(int argc, char* argv[])
       if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
     }
     if (ok) {
+      f_salida.open(archivo_salida);
+      assert(f_salida);
       cout << endl;
       for (int i=0;i<Dant.cantFilas();i++) {
         cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
       }
 
-      cout << n << " " << m0 << " " << ml << " " << mp <<endl;
+      f_salida << n << " " << m0 << " " << ml << " " << mp <<endl;
       for(int i=0;i<n;i++){
-        cout << setprecision(15) << k[i] << " ";
+        f_salida << setprecision(15) << k[i] << " ";
       }
-      cout << endl;
+      f_salida << endl;
       for(int i=0;i<n;i++){
-        cout << l[i] << " ";
+        f_salida << P[c][i].l << " ";
       }
-      cout << endl;
+      f_salida << endl;
       for(int i=0;i<n;i++){
-        cout << p[i] << " ";
+        f_salida << P[c][i].p << " ";
       }
-      cout << endl;
+      f_salida << endl;
+      f_salida.close();
       break;
     }
   }

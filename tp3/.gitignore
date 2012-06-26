@@ -4,3 +4,5 @@ tp3-martin
 main
 *.o
 .*.swp
+kk*
+salida*

@@ -7,8 +7,11 @@
 
 using namespace std;
 
-typedef set < vector<Coef> > SetPruebas;
+struct Piso {
+  int l;
+  int p;
+};
 
-void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> &l, vector<int> &p, vector< vector <tuple <int,int> > > &P);
+void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> l, vector<int> p, vector< vector < Piso > > &P);
 
 #endif
