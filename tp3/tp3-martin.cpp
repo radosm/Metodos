@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   //
 
   vector< SetPruebas > P(10);
-  h1(n,m0,ml,mp,k,l,p,P);
+//  h1(n,m0,ml,mp,k,l,p,P);
 
   Matriz MK(n,n);
   
