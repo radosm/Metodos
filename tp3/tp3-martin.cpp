@@ -77,29 +77,44 @@ int main(int argc, char* argv[])
   // Arma matriz MK=inv(M)*K
   //
 
-  vector< SetPruebas > P(10);
-//  h1(n,m0,ml,mp,k,l,p,P);
+  vector< SetPruebas > P;
+  h1(n,m0,ml,mp,k,l,p,P);
 
   Matriz MK(n,n);
   
-  for(int i=0;i<n;i++){
-    float div=(m0+l[i]*ml+p[i]*mp); // div es el coeficiente de M (M es diagonal)
-
-    // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
-    if (i>0) {
-      MK.sub(i,i-1)=k[i]/div;  
-    }
-    if (i<n-1) {
-      MK.sub(i,i)=(-k[i]-k[i+1])/div;
-      MK.sub(i,i+1)=k[i+1]/div;
-    } else {
-      MK.sub(i,i)=-k[i]/div;
+  for(int c=1;c<P.size();c++){
+    cout << "c=" << c << " P[c].size()="<< P[c].size() << endl;
+    SetPruebas::iterator it=P[c].begin();
+    for ( it=P[c].begin() ; it != P[c].end(); it++ ){
+      for(int i=0;i<n;i++){
+        //float div=(m0+l[i]*ml+p[i]*mp); // div es el coeficiente de M (M es diagonal)
+        float div=((*it)[i]); // div es el coeficiente de M (M es diagonal)
+cout << "iti=" << (*it)[i] << endl;
+  
+        // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
+        if (i>0) {
+          MK.sub(i,i-1)=k[i]/div;  
+        }
+        if (i<n-1) {
+        MK.sub(i,i)=(-k[i]-k[i+1])/div;
+          MK.sub(i,i+1)=k[i+1]/div;
+        } else {
+          MK.sub(i,i)=-k[i]/div;
+        }
+      }
+      ////
+      Matriz Qac;
+      Matriz Dant;
+      MK.autoval_autovect(Qac,Dant);
+      cout << endl;
+    
+      vector<Coef> w(Dant.cantFilas());
+      for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
+      for (int i=0;i<Dant.cantFilas();i++) cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
+      ////
     }
   }
 
-  Matriz Qac;
-  Matriz Dant;
-  MK.autoval_autovect(Qac,Dant);
 
 /*
   cout << endl;
@@ -110,11 +125,6 @@ int main(int argc, char* argv[])
 
   cout << Dant << endl;
 */
-  cout << endl;
-
-  vector<Coef> w(Dant.cantFilas());
-  for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
-  for (int i=0;i<Dant.cantFilas();i++) cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
 
   fin=clock();
   double segundos=(double)fin/CLOCKS_PER_SEC;
