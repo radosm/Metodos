@@ -16,7 +16,7 @@ using namespace std;
 //
 // Arma matriz MK=inv(M)*K, devuelve matrices Qac y Dant con autovectores y autovalores
 //
-void calculo_frecuencias(int n,Coef m0, Coef ml, Coef mp, Matriz K, vector < Piso > &VP, Matriz& Qac, Matriz& Dant){
+void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz K, vector < Piso > &VP, Matriz& Qac, Matriz& Dant){
   Matriz MK(n,n);
   for(int i=0;i<n;i++){
     float div=m0+VP[i].l*ml+VP[i].p*mp; // div es el coeficiente de M (M es diagonal)
@@ -111,12 +111,13 @@ int main(int argc, char* argv[])
 
     Matriz Qac;
     Matriz Dant;
-    calculo_frecuencias(n,m0,ml,mp,K,P[c],Qac,Dant); // P[c] es la configuración de los pisos
+
+    // Calcula autovectores y autovalores para esta prueba
+    calculo_av_prueba(n,m0,ml,mp,K,P[c],Qac,Dant); // P[c] es la configuración de los pisos
     
+    // Calcula frecuencias a partir de autovalores
+
     vector<Coef> w(Dant.cantFilas());
-
-    // Calcula frecuencias
-
     for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
 
     // Verifica si no están en el rango prohibido (2.7 a 3.3)
