@@ -14,6 +14,29 @@
 using namespace std;
 
 //
+// Arma matriz MK=inv(M)*K, devuelve matrices Qac y Dant con autovectores y autovalores
+//
+void calculo_frecuencias(int n,Coef m0, Coef ml, Coef mp, Matriz K, vector < Piso > &VP, Matriz& Qac, Matriz& Dant){
+  Matriz MK(n,n);
+  for(int i=0;i<n;i++){
+    float div=m0+VP[i].l*ml+VP[i].p*mp; // div es el coeficiente de M (M es diagonal)
+    
+    // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
+    if (i>0) {
+        MK.sub(i,i-1)=K.sub(i,i-1)/div;  
+    }
+    if (i<n-1) {
+      MK.sub(i,i)=K.sub(i,i)/div;
+      MK.sub(i,i+1)=K.sub(i,i+1)/div;
+    } else {
+      MK.sub(i,i)=K.sub(i,i)/div;
+    }
+  }
+  // Calculo autovectores y autovalores de inv(M)*K
+  MK.autoval_autovect(Qac,Dant);
+}
+
+//
 // MAIN
 //
 int main(int argc, char* argv[])
@@ -59,44 +82,50 @@ int main(int argc, char* argv[])
   }
   f.close();
 
-  //
-  // Arma matriz MK=inv(M)*K
-  //
+  // Calcula matriz K
+  Matriz K(n,n);
+  for(int i=0;i<n;i++){
+ 
+    // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
+    if (i>0) {
+      K.sub(i,i-1)=k[i];  
+    }
+    if (i<n-1) {
+      K.sub(i,i)=(-k[i]-k[i+1]);
+      K.sub(i,i+1)=k[i+1];
+    } else {
+      K.sub(i,i)=-k[i];
+    }
+  }
 
-  vector< vector < Piso > > P;
+  // En este vector quedará el set de pruebas calculado por la heurística
+  vector< vector < Piso > > P;   // P[c][i].l=cantidad de livianos de piso i en la prueba c
+                                 // P[c][i].p=cantidad de pesados de piso i en la prueba c
 
   // Calcula set de pruebas de heurística 1
   h1(n,m0,ml,mp,k,l,p,P);
 
-  Matriz MK(n,n);
-  
-  for(int c=0;c<P.size();c++){
-    if (!(c%10)) cout << "." << flush;
-    for(int i=0;i<n;i++){
-      float div=m0+P[c][i].l*ml+P[c][i].p*mp; // div es el coeficiente de M (M es diagonal)
-  
-      // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
-      if (i>0) {
-          MK.sub(i,i-1)=k[i]/div;  
-      }
-      if (i<n-1) {
-      MK.sub(i,i)=(-k[i]-k[i+1])/div;
-        MK.sub(i,i+1)=k[i+1]/div;
-      } else {
-        MK.sub(i,i)=-k[i]/div;
-      }
-    }
+  int c;
+  for(c=0;c<P.size();c++){
+    if (!(c%10)) cout << "." << flush; // Para ver que está trabajando
 
     Matriz Qac;
     Matriz Dant;
-    MK.autoval_autovect(Qac,Dant);
+    calculo_frecuencias(n,m0,ml,mp,K,P[c],Qac,Dant); // P[c] es la configuración de los pisos
     
     vector<Coef> w(Dant.cantFilas());
+
+    // Calcula frecuencias
+
     for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
+
+    // Verifica si no están en el rango prohibido (2.7 a 3.3)
     bool ok=true;
     for (int i=0;i<Dant.cantFilas();i++) {
       if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
     }
+
+    // Si las frecuencias no están en el rango prohibido graba el archivo de salida y sale
     if (ok) {
       f_salida.open(archivo_salida);
       assert(f_salida);
@@ -121,24 +150,16 @@ int main(int argc, char* argv[])
       f_salida.close();
       break;
     }
+    
+    // Si llegó acá todavía no hay solución, pasa a la próxima prueba
   }
-  cout << endl;
 
-
-/*
-  cout << endl;
-
-  cout << MK << endl;
-
-  cout << Qac << endl;
-
-  cout << Dant << endl;
-*/
-
+  // Imprime el tiempo transcurrido
   fin=clock();
   double segundos=(double)fin/CLOCKS_PER_SEC;
 
   cout << endl;
+  cout << "Cantidad de pruebas: " << c << "." << endl;
   cout << "Tiempo ejecucion: " << segundos << " segundos." << endl;
 
   return 0;

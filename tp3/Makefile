@@ -17,11 +17,11 @@ main: main.o matriz.o Matriz_Givens.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 tp3.o: tp3.cpp
-tp3-martin.o: tp3-martin.cpp heuristicas.h
+tp3-martin.o: tp3-martin.cpp heuristicas.h Coef.h
 main.o: main.cpp matriz.h Matriz_Givens.h Coef.h
 matriz.o: matriz.cpp matriz.h Coef.h Matriz_Givens.h
 Matriz_Givens.o: Matriz_Givens.cpp Coef.h matriz.h Coef.h Matriz_Givens.h
-heuristicas.o: heuristicas.cpp heuristicas.h
+heuristicas.o: heuristicas.cpp heuristicas.h Coef.h
 
 clean:
 	rm -f *.o $(ALL)
