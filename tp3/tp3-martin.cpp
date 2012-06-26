@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,64 +57,80 @@ int main(int argc, char* argv[])
   }
   f.close();
 
-/*
   // Muestra datos de entrada
-  cout << "n: "<<n<<" m0: "<<m0<<" ml: "<<ml<<" mp: "<<mp<<endl;
-  for(int i=0;i<n;i++){
-    cout << k[i] << " ";
-  }
-  cout << endl;
-  for(int i=0;i<n;i++){
-    cout << l[i] << " ";
-  }
-  cout << endl;
-  for(int i=0;i<n;i++){
-    cout << p[i] << " ";
-  }
-  cout << endl;
-*/
+//  cout << "n: "<<n<<" m0: "<<m0<<" ml: "<<ml<<" mp: "<<mp<<endl;
+  //for(int i=0;i<n;i++){
+    //cout << setprecision(15) << k[i] << " ";
+  //}
+  //cout << endl;
+  //for(int i=0;i<n;i++){
+    //cout << l[i] << " ";
+  //}
+  //cout << endl;
+  //for(int i=0;i<n;i++){
+    //cout << p[i] << " ";
+  //}
+  //cout << endl;
 
   //
   // Arma matriz MK=inv(M)*K
   //
 
-  vector< SetPruebas > P;
+  vector< vector <Coef> > P;
   h1(n,m0,ml,mp,k,l,p,P);
 
   Matriz MK(n,n);
   
-  for(int c=1;c<P.size();c++){
-    cout << "c=" << c << " P[c].size()="<< P[c].size() << endl;
-    SetPruebas::iterator it=P[c].begin();
-    for ( it=P[c].begin() ; it != P[c].end(); it++ ){
-      for(int i=0;i<n;i++){
-        //float div=(m0+l[i]*ml+p[i]*mp); // div es el coeficiente de M (M es diagonal)
-        float div=((*it)[i]); // div es el coeficiente de M (M es diagonal)
-cout << "iti=" << (*it)[i] << endl;
+  for(int c=0;c<P.size();c++){
+    if (!c%10) cout << ".";
+    for(int i=0;i<n;i++){
+      float div=P[c][i]; // div es el coeficiente de M (M es diagonal)
   
-        // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
-        if (i>0) {
+      // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
+      if (i>0) {
           MK.sub(i,i-1)=k[i]/div;  
-        }
-        if (i<n-1) {
-        MK.sub(i,i)=(-k[i]-k[i+1])/div;
-          MK.sub(i,i+1)=k[i+1]/div;
-        } else {
-          MK.sub(i,i)=-k[i]/div;
-        }
       }
-      ////
-      Matriz Qac;
-      Matriz Dant;
-      MK.autoval_autovect(Qac,Dant);
-      cout << endl;
+      if (i<n-1) {
+      MK.sub(i,i)=(-k[i]-k[i+1])/div;
+        MK.sub(i,i+1)=k[i+1]/div;
+      } else {
+        MK.sub(i,i)=-k[i]/div;
+      }
+    }
+
+    Matriz Qac;
+    Matriz Dant;
+    MK.autoval_autovect(Qac,Dant);
     
-      vector<Coef> w(Dant.cantFilas());
-      for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
-      for (int i=0;i<Dant.cantFilas();i++) cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
-      ////
+    vector<Coef> w(Dant.cantFilas());
+    for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
+    bool ok=true;
+    for (int i=0;i<Dant.cantFilas();i++) {
+      if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
+    }
+    if (ok) {
+      cout << endl;
+      for (int i=0;i<Dant.cantFilas();i++) {
+        cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
+      }
+
+      cout << n << " " << m0 << " " << ml << " " << mp <<endl;
+      for(int i=0;i<n;i++){
+        cout << setprecision(15) << k[i] << " ";
+      }
+      cout << endl;
+      for(int i=0;i<n;i++){
+        cout << l[i] << " ";
+      }
+      cout << endl;
+      for(int i=0;i<n;i++){
+        cout << p[i] << " ";
+      }
+      cout << endl;
+      break;
     }
   }
+  cout << endl;
 
 
 /*
