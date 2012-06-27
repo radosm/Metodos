@@ -5,4 +5,5 @@ main
 *.o
 .*.swp
 kk*
+pp*
 salida*

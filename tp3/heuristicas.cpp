@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#define CANT_PRUEBAS_H1 5000
+#define CANT_PRUEBAS 5000    // Cantidad de pruebas por heurística
 #define TMAX 60              // Tiempo máximo en segundos
 
 //
@@ -47,7 +47,7 @@ void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
 
   int ps=0;
   int pp=0;
-  for (int i=1;i<CANT_PRUEBAS_H1;i++) { 
+  for (int i=1;i<CANT_PRUEBAS;i++) { 
     // Elige dos pisos
     ps=rand()%n;
     pp=rand()%n; 
@@ -81,8 +81,8 @@ void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
 
     P=VP[c]; // Configuración de pisos
     // Calcula autovectores y autovalores para esta prueba
-    calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P[c] es la configuración de los pisos
-                                                   // en Dant quedan los autovalores
+    calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
+                                                // en Dant quedan los autovalores
     
     // Calcula frecuencias a partir de autovalores
     for (int i=0;i<n;i++) w[i]=sqrt(-Dant.sub(i,i));
@@ -105,7 +105,7 @@ void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
       break;
     }
     
-    if (segundos > 60) { // Máximo tiempo permitido para las pruebas
+    if (segundos > TMAX) { // Máximo tiempo permitido para las pruebas
       cout << endl;
       cout << "Tiempo máximo alcanzado!" << endl;
       tmax=true;
@@ -142,6 +142,19 @@ void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
     // Aca va la heuristica
     //
 
+    // Calcula autovectores y autovalores para esta prueba
+    calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
+                                                // en Dant quedan los autovalores
+    
+    // Calcula frecuencias a partir de autovalores
+    for (int i=0;i<n;i++) w[i]=sqrt(-Dant.sub(i,i));
+
+    // Verifica si no están en el rango prohibido (2.7 a 3.3)
+    ok=true;
+    for (int i=0;i<n;i++) {
+      if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
+    }
+
     // Calcula el tiempo transcurrido
     fin=clock();
     segundos=(double)(fin - inicio)/CLOCKS_PER_SEC;
@@ -154,7 +167,7 @@ void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
       break;
     }
     
-    if (segundos > 60) { // Máximo tiempo permitido para las pruebas
+    if (segundos > TMAX) { // Máximo tiempo permitido para las pruebas
       cout << endl;
       cout << "Tiempo máximo alcanzado!" << endl;
       tmax=true;

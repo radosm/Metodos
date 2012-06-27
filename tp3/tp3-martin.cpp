@@ -70,10 +70,10 @@ int main(int argc, char* argv[])
     }
   }
 
-  bool ok;   // Aca la heurística devuelve si encontro solució o no
+  bool ok;   // Aca la heurística devuelve si encontro solución o no
   bool tmax; // Aca la heurística devuelve si terminó por tiempo máximo
 
-                      // En este vector quedará la configuración del piso calculado por la heurística
+                      // En este vector quedará la configuración de los pisos calculados por la heurística
   vector< Piso > P;   // P[i].l=cantidad de livianos de piso i
                       // P[i].p=cantidad de pesados de piso i
 
