@@ -37,8 +37,70 @@ void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector < Piso
 
 void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
   int n=w.size();
-  for (int k=i+1;k<n;k++){
+  int candidato;
+  if (w[i]<3 && (p[i]!=0 || l[i]!=0)) { // busco a quien ponerle
+    candidato=-1;
+    for (int k=i+1;k<n;k++){
+      if (w[k] >= 3.3 && candidato!=-1) {
+        candidato=k;
+      }
+      if (w[k] >= 3.3 && w[k] <=3.3 ) {
+        candidato=k;
+        break;
+      }
+    }
+    if (candidato==-1) { // No encontré ninguno
+      for (int k=i-1;k>=0;k--){
+        if (w[k] >= 3.3 && candidato!=-1) {
+          candidato=k;
+        }
+        if (w[k] >= 3.3 && w[k] <=3.3) {
+          candidato=k;
+          break;
+        }
+      }
+    } 
+  
+    if (candidato!=-1) { 
+      if (p[i]!=0) { 
+        if (p[i]>=10) { p[i]-=10;p[candidato]+=10; } else { p[candidato]+=p[i]; p[i]=0; }
+      } else {
+        if (l[i]>=10) { l[i]-=10;l[candidato]+=10; } else { l[candidato]+=l[i]; l[i]=0; }
+      }
+    }
+  } else {      // busco a quien sacarle
+    candidato=-1;
+    for (int k=i+1;k<n;k++){
+      if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
+        candidato=k;
+      }
+      if (w[k] < 3  && w[k] >= 2.7 && (p[k]!=0 || l[k]!=0)) {
+        candidato=k;
+        break;
+      }
+    }
+    if (candidato==-1) { // No encontré ninguno
+      for (int k=i-1;k>=0;k--){
+        if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
+          candidato=k;
+        }
+        if (w[k] < 3  && w[k] >= 2.7 && (p[k]!=0 || l[k]!=0)) {
+          candidato=k;
+          break;
+        }
+      }
+    } 
+  
+    if (candidato!=-1) { 
+      if (p[candidato]!=0) {
+        if (p[candidato]>=10) { p[i]+=10;p[candidato]-=10; } else { p[i]+=p[candidato]; p[candidato]=0; }
+      } else {
+        if (l[candidato]>=10) { l[i]+=10;l[candidato]-=10; } else { l[i]+=l[candidato]; l[candidato]=0; }
+      }
+    }
   }
+
+
 }
 
 void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p, bool& ok, bool& tmax, vector< Piso >& P) {
@@ -151,7 +213,7 @@ void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
 
   for(int i=0;i<n;i++){
     while (w[i]>=2.7 && w[i]<=3.3 && segundos <= TMAX) {
-      h2_estabilizar(n,m0,ml,mp,K,l,p,w);
+      h2_estabilizar(i,l,p,w);
       // Calcula autovectores y autovalores para la primera prueba
       calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
                                                   // en Dant quedan los autovalores
