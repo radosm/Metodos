@@ -35,6 +35,12 @@ void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector < Piso
   MK.autoval_autovect(Qac,Dant);
 }
 
+void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
+  int n=w.size();
+  for (int k=i+1;k<n;k++){
+  }
+}
+
 void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p, bool& ok, bool& tmax, vector< Piso >& P) {
   vector<Piso> v(n);
   vector< vector <Piso> > VP;
@@ -135,46 +141,49 @@ void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
 
   inicio=clock();
   int c=0;
-  while (true){
-    if (!(c%10)) cout << "." << flush; // Para ver que está trabajando
 
-    //
-    // Aca va la heuristica
-    //
+  // Calcula autovectores y autovalores para la primera prueba
+  calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
+                                              // en Dant quedan los autovalores
+  // Calcula frecuencias a partir de autovalores
+  for (int i=0;i<n;i++) w[i]=sqrt(-Dant.sub(i,i));
 
-    // Calcula autovectores y autovalores para esta prueba
-    calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
-                                                // en Dant quedan los autovalores
-    
-    // Calcula frecuencias a partir de autovalores
-    for (int i=0;i<n;i++) w[i]=sqrt(-Dant.sub(i,i));
 
-    // Verifica si no están en el rango prohibido (2.7 a 3.3)
-    ok=true;
-    for (int i=0;i<n;i++) {
-      if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
+  for(int i=0;i<n;i++){
+    while (w[i]>=2.7 && w[i]<=3.3 && segundos <= TMAX) {
+      h2_estabilizar(n,m0,ml,mp,K,l,p,w);
+      // Calcula autovectores y autovalores para la primera prueba
+      calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
+                                                  // en Dant quedan los autovalores
+      // Calcula frecuencias a partir de autovalores
+      for (int i=0;i<n;i++) w[i]=sqrt(-Dant.sub(i,i));
+
+      // Calcula el tiempo transcurrido
+      fin=clock();
+      segundos=(double)(fin - inicio)/CLOCKS_PER_SEC;
     }
-
-    // Calcula el tiempo transcurrido
-    fin=clock();
-    segundos=(double)(fin - inicio)/CLOCKS_PER_SEC;
-
-    // Si las frecuencias no están en el rango prohibido terminamos=>sale
-    if (ok) {
-      cout << endl;
-      cout << "Solución encontrada:" << endl;
-      for (int i=0;i<n;i++) { cout << "  w[" << i << "]=" << w[i] << endl; }
-      break;
-    }
-    
-    if (segundos > TMAX) { // Máximo tiempo permitido para las pruebas
-      cout << endl;
-      cout << "Tiempo máximo alcanzado!" << endl;
-      tmax=true;
-      break;
-    }
-    c++;
   }
+
+  // Verifica si no están en el rango prohibido (2.7 a 3.3)
+  ok=true;
+  for (int i=0;i<n;i++) {
+    if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
+  }
+
+  // Si las frecuencias no están en el rango prohibido terminamos=>sale
+  if (ok) {
+    cout << endl;
+    cout << "Solución encontrada:" << endl;
+    for (int i=0;i<n;i++) { cout << "  w[" << i << "]=" << w[i] << endl; }
+  }
+    
+  if (segundos > TMAX) { // Máximo tiempo permitido para las pruebas
+    cout << endl;
+    cout << "Tiempo máximo alcanzado!" << endl;
+    tmax=true;
+  }
+  c++;
+    
   if (!ok && !tmax) cout << endl;
 
   cout << "Cantidad de pruebas: " << c << "." << endl;
