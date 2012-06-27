@@ -12,6 +12,7 @@ struct Piso {
   int p;
 };
 
-void h1(int n,Coef m0, Coef ml, Coef mp, vector<Coef> &k, vector<int> l, vector<int> p, vector< vector < Piso > > &P);
+void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p, bool& ok, bool& tmax, vector< Piso >& P);
+void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p, bool& ok, bool& tmax, vector< Piso >& P);
 
 #endif
