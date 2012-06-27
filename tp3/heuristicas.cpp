@@ -38,7 +38,11 @@ void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector < Piso
 void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
   int n=w.size();
   int candidato;
+
+  cout << "i=" << i << " w["<<i<<"]="<<w[i]<<endl;
+  
   if (w[i]<3 && (p[i]!=0 || l[i]!=0)) { // busco a quien ponerle
+    cout << "pongo" << endl;
     candidato=-1;
     for (int k=i+1;k<n;k++){
       if (w[k] >= 3.3 && candidato!=-1) {
@@ -69,8 +73,10 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
       }
     }
   } else {      // busco a quien sacarle
+    cout << "saco" << endl;
     candidato=-1;
     for (int k=i+1;k<n;k++){
+      cout << "w["<<k<<"]="<<w[k]<<endl;
       if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
         candidato=k;
       }
@@ -81,6 +87,7 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
     }
     if (candidato==-1) { // No encontré ninguno
       for (int k=i-1;k>=0;k--){
+        cout << "w["<<k<<"]="<<w[k]<<endl;
         if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
           candidato=k;
         }
@@ -91,6 +98,7 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
       }
     } 
   
+    cout << candidato << endl;
     if (candidato!=-1) { 
       if (p[candidato]!=0) {
         if (p[candidato]>=10) { p[i]+=10;p[candidato]-=10; } else { p[i]+=p[candidato]; p[candidato]=0; }
@@ -214,6 +222,10 @@ void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p
   for(int i=0;i<n;i++){
     while (w[i]>=2.7 && w[i]<=3.3 && segundos <= TMAX) {
       h2_estabilizar(i,l,p,w);
+      for (int i=0;i<n;i++){
+        P[i].l=l[i];
+        P[i].p=p[i];
+      }
       // Calcula autovectores y autovalores para la primera prueba
       calculo_av_prueba(n,m0,ml,mp,K,P,Qac,Dant); // P es la configuración de los pisos
                                                   // en Dant quedan los autovalores
