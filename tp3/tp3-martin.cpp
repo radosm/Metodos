@@ -49,10 +49,12 @@ int main(int argc, char* argv[])
   char *archivo_entrada=argv[1];
   char *archivo_salida=argv[2];
 
-  clock_t inicio, fin;
+  clock_t fin;
+  double segundos;
+  bool ok;
+  Matriz Qac;
+  Matriz Dant;
  
-  inicio=clock();
-
   //
   // Lee datos de entrada
   //
@@ -82,11 +84,12 @@ int main(int argc, char* argv[])
   }
   f.close();
 
+  vector<Coef> w(n); // Acá quedarán las frecuencias
+
   // Calcula matriz K
   Matriz K(n,n);
   for(int i=0;i<n;i++){
  
-    // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
     if (i>0) {
       K.sub(i,i-1)=k[i];  
     }
@@ -109,55 +112,64 @@ int main(int argc, char* argv[])
   for(c=0;c<P.size();c++){
     if (!(c%10)) cout << "." << flush; // Para ver que está trabajando
 
-    Matriz Qac;
-    Matriz Dant;
-
     // Calcula autovectores y autovalores para esta prueba
     calculo_av_prueba(n,m0,ml,mp,K,P[c],Qac,Dant); // P[c] es la configuración de los pisos
+                                                   // en Dant quedan los autovalores
     
     // Calcula frecuencias a partir de autovalores
-
-    vector<Coef> w(Dant.cantFilas());
     for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
 
     // Verifica si no están en el rango prohibido (2.7 a 3.3)
-    bool ok=true;
+    ok=true;
     for (int i=0;i<Dant.cantFilas();i++) {
       if (w[i]>=2.7 && w[i] <= 3.3) ok=false;
     }
 
-    // Si las frecuencias no están en el rango prohibido graba el archivo de salida y sale
+    // Si las frecuencias no están en el rango prohibido terminamos=>sale
     if (ok) {
-      f_salida.open(archivo_salida);
-      assert(f_salida);
-      cout << endl;
-      for (int i=0;i<Dant.cantFilas();i++) {
-        cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
-      }
-
-      f_salida << n << " " << m0 << " " << ml << " " << mp <<endl;
-      for(int i=0;i<n;i++){
-        f_salida << setprecision(15) << k[i] << " ";
-      }
-      f_salida << endl;
-      for(int i=0;i<n;i++){
-        f_salida << P[c][i].l << " ";
-      }
-      f_salida << endl;
-      for(int i=0;i<n;i++){
-        f_salida << P[c][i].p << " ";
-      }
-      f_salida << endl;
-      f_salida.close();
       break;
     }
     
-    // Si llegó acá todavía no hay solución, pasa a la próxima prueba
+    // Calcula el tiempo transcurrido
+    fin=clock();
+    segundos=(double)fin/CLOCKS_PER_SEC;
+    if (segundos > 60) { // Máximo tiempo permitido para las pruebas
+      cout << endl;
+      cout << "Tiempo máximo alcanzado!" << endl;
+      break;
+    }
+    // Si llegó acá todavía no hay solución y no se llegó al tiempo máximo=>pasa a la próxima prueba
   }
 
-  // Imprime el tiempo transcurrido
-  fin=clock();
-  double segundos=(double)fin/CLOCKS_PER_SEC;
+  // Si se encontró solución graba el archivo de salida
+  // Luego imprime el tiempo transcurrido y la cantidad de pruebas ejecutadas
+
+  if (ok) {
+    f_salida.open(archivo_salida);
+    assert(f_salida);
+    cout << endl;
+    for (int i=0;i<Dant.cantFilas();i++) {
+      cout << "l[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
+    }
+
+    f_salida << n << " " << m0 << " " << ml << " " << mp <<endl;
+    for(int i=0;i<n;i++){
+      f_salida << setprecision(15) << k[i] << " ";
+    }
+    f_salida << endl;
+    for(int i=0;i<n;i++){
+      f_salida << P[c][i].l << " ";
+    }
+    f_salida << endl;
+    for(int i=0;i<n;i++){
+      f_salida << P[c][i].p << " ";
+    }
+    f_salida << endl;
+    f_salida.close();
+  } else {
+    cout << endl;
+    cout << "No se encontró solución con las pruebas hechas." << endl;
+  }
 
   cout << endl;
   cout << "Cantidad de pruebas: " << c << "." << endl;
