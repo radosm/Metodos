@@ -38,13 +38,19 @@ void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector < Piso
 void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
   int n=w.size();
   int candidato;
+  int minimo, maximo;
 
-  cout << "i=" << i << " w["<<i<<"]="<<w[i]<<endl;
   
   if (w[i]<3 && (p[i]!=0 || l[i]!=0)) { // busco a quien ponerle
-    cout << "pongo" << endl;
     candidato=-1;
+    minimo=-1;
     for (int k=i+1;k<n;k++){
+      //buscando el minimo
+      if (minimo==-1){ 
+        if (l[k]!=0 || p[k]!=0) minimo=k;
+      }else{
+	if (w[minimo]>=w[k] && (l[k]!=0 || p[k]!=0)) minimo=k;
+      }    
       if (w[k] >= 3.3 && candidato!=-1) {
         candidato=k;
       }
@@ -53,7 +59,16 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
         break;
       }
     }
-    if (candidato==-1) { // No encontré ninguno
+    //sigo bucando minimo
+    for (int k=i-1;k>=0;k--){
+      if (minimo==-1){ 
+        if (l[k]!=0 || p[k]!=0) minimo=k;
+      }else{
+	if (w[minimo]>=w[k] && (l[k]!=0 || p[k]!=0)) minimo=k;
+      }   
+    }
+    //sigo bucando candidato
+    if (candidato==-1){
       for (int k=i-1;k>=0;k--){
         if (w[k] >= 3.3 && candidato!=-1) {
           candidato=k;
@@ -64,19 +79,35 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
         }
       }
     } 
-  
-    if (candidato!=-1) { 
-      if (p[i]!=0) { 
-        if (p[i]>=10) { p[i]-=10;p[candidato]+=10; } else { p[candidato]+=p[i]; p[i]=0; }
-      } else {
-        if (l[i]>=10) { l[i]-=10;l[candidato]+=10; } else { l[candidato]+=l[i]; l[i]=0; }
-      }
+    //ya termine busqueda de candidatos y minimo    
+    if (candidato==-1){
+      if (minimo!=-1){
+        candidato=minimo;
+      }else{
+        candidato=0;
+      } 
     }
+  
+    if (p[i]!=0) { 
+      if (p[i]>=10) { p[i]-=10;p[candidato]+=10; } else { p[candidato]+=p[i]; p[i]=0; }
+    } else {
+      if (l[i]>=10) { l[i]-=10;l[candidato]+=10; } else { l[candidato]+=l[i]; l[i]=0; }
+    }
+    
   } else {      // busco a quien sacarle
     cout << "saco" << endl;
     candidato=-1;
     for (int k=i+1;k<n;k++){
       cout << "w["<<k<<"]="<<w[k]<<endl;
+      //buscando el maximo
+      if (minimo==-1){ 
+        if (l[k]!=0 || p[k]!=0) maximo=k;
+      }else{
+	if (w[maximo]<=w[k] && (l[k]!=0 || p[k]!=0)) maximo=k;
+      }    
+      if (w[k] >= 3.3 && candidato!=-1) {
+        candidato=k;
+      }
       if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
         candidato=k;
       }
@@ -85,7 +116,19 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
         break;
       }
     }
-    if (candidato==-1) { // No encontré ninguno
+    
+    //sigo buscando maximo
+    for (int k=i-1;k>=0;k--){
+      if (minimo==-1){ 
+        if (l[k]!=0 || p[k]!=0) maximo=k;
+      }else{
+	if (w[maximo]<=w[k] && (l[k]!=0 || p[k]!=0)) maximo=k;
+      }
+    }
+
+
+    //sigo buscando candidato
+    if (candidato==-1) {
       for (int k=i-1;k>=0;k--){
         cout << "w["<<k<<"]="<<w[k]<<endl;
         if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
@@ -97,14 +140,22 @@ void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
         }
       }
     } 
+
+    //ya termine busqueda de candidatos y maximo  
+    if (candidato==-1){
+      if (maximo!=-1){
+        candidato=maximo;
+      }else{
+        candidato=0;
+      } 
+    }
+
+    cout << "saco=" << candidato << endl;
   
-    cout << candidato << endl;
-    if (candidato!=-1) { 
-      if (p[candidato]!=0) {
-        if (p[candidato]>=10) { p[i]+=10;p[candidato]-=10; } else { p[i]+=p[candidato]; p[candidato]=0; }
-      } else {
-        if (l[candidato]>=10) { l[i]+=10;l[candidato]-=10; } else { l[i]+=l[candidato]; l[candidato]=0; }
-      }
+    if (p[candidato]!=0) {
+      if (p[candidato]>=10) { p[i]+=10;p[candidato]-=10; } else { p[i]+=p[candidato]; p[candidato]=0; }
+    } else {
+      if (l[candidato]>=10) { l[i]+=10;l[candidato]-=10; } else { l[i]+=l[candidato]; l[candidato]=0; }
     }
   }
 
