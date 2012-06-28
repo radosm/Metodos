@@ -37,128 +37,51 @@ void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector < Piso
 
 void h2_estabilizar(int i, vector<int>& l,vector<int>& p,vector<Coef>& w){
   int n=w.size();
-  int candidato;
-  int minimo, maximo;
+  // cand_s = candidato para sacar autos, cand_p = candidato para poner autos
+  int cand_s,cand_p;
+  Coef min_mayor_3,max_menor_3,min_con_autos,max_con_autos;
 
-  
-  if (w[i]<3 && (p[i]!=0 || l[i]!=0)) { // busco a quien ponerle
-    candidato=-1;
-    minimo=-1;
-    for (int k=i+1;k<n;k++){
-      //buscando el minimo
-      if (minimo==-1){ 
-        if (l[k]!=0 || p[k]!=0) minimo=k;
-      }else{
-	if (w[minimo]>=w[k] && (l[k]!=0 || p[k]!=0)) minimo=k;
-      }    
-      if (w[k] >= 3.3 && candidato!=-1) {
-        candidato=k;
-      }
-      if (w[k] >= 3.3 && w[k] <=3.3 ) {
-        candidato=k;
-        break;
-      }
-    }
-    //sigo bucando minimo
-    for (int k=i-1;k>=0;k--){
-      if (minimo==-1){ 
-        if (l[k]!=0 || p[k]!=0) minimo=k;
-      }else{
-	if (w[minimo]>=w[k] && (l[k]!=0 || p[k]!=0)) minimo=k;
-      }   
-    }
-    //sigo bucando candidato
-    if (candidato==-1){
-      for (int k=i-1;k>=0;k--){
-        if (w[k] >= 3.3 && candidato!=-1) {
-          candidato=k;
-        }
-        if (w[k] >= 3.3 && w[k] <=3.3) {
-          candidato=k;
-          break;
-        }
-      }
-    } 
-    //ya termine busqueda de candidatos y minimo    
-    if (candidato==-1){
-      if (minimo!=-1){
-        candidato=minimo;
-      }else{
-        candidato=0;
-      } 
-    }
-  
-    if (p[i]!=0) { 
-      if (p[i]>=10) { p[i]-=10;p[candidato]+=10; } else { p[candidato]+=p[i]; p[i]=0; }
-    } else {
-      if (l[i]>=10) { l[i]-=10;l[candidato]+=10; } else { l[candidato]+=l[i]; l[i]=0; }
-    }
-    
-  } else {      // busco a quien sacarle
-    cout << "saco" << endl;
-    candidato=-1;
-    for (int k=i+1;k<n;k++){
-      cout << "w["<<k<<"]="<<w[k]<<endl;
-      //buscando el maximo
-      if (minimo==-1){ 
-        if (l[k]!=0 || p[k]!=0) maximo=k;
-      }else{
-	if (w[maximo]<=w[k] && (l[k]!=0 || p[k]!=0)) maximo=k;
-      }    
-      if (w[k] >= 3.3 && candidato!=-1) {
-        candidato=k;
-      }
-      if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
-        candidato=k;
-      }
-      if (w[k] < 3  && w[k] >= 2.7 && (p[k]!=0 || l[k]!=0)) {
-        candidato=k;
-        break;
-      }
-    }
-    
-    //sigo buscando maximo
-    for (int k=i-1;k>=0;k--){
-      if (minimo==-1){ 
-        if (l[k]!=0 || p[k]!=0) maximo=k;
-      }else{
-	if (w[maximo]<=w[k] && (l[k]!=0 || p[k]!=0)) maximo=k;
-      }
-    }
+  cand_s=cand_p=-1;
+  min_mayor_3=min_con_autos=999999999;
+  max_menor_3=max_con_autos=-1;
 
+  for (int j=i+1;j<n;j++){
+    if (w[j]<3 && (p[j]+l[j])!=0 && w[j]>max_menor_3) {max_menor_3=w[j]; cand_s=j;}
+    if (w[j]>3 && (p[j]+l[j])!=0 && w[j]<min_mayor_3) {min_mayor_3=w[j]; cand_p=j;}
+    if (w[j]>max_con_autos && (p[j]+l[j])!=0 && cand_s==-1) {max_con_autos=w[j];cand_s=j;}
+    if (w[j]<min_con_autos && (p[j]+l[j])!=0 && cand_p==-1) {min_con_autos=w[j];cand_p=j;}
+  }
 
-    //sigo buscando candidato
-    if (candidato==-1) {
-      for (int k=i-1;k>=0;k--){
-        cout << "w["<<k<<"]="<<w[k]<<endl;
-        if (w[k] < 3 && candidato!=-1 && (p[k]!=0 || l[k]!=0)) {
-          candidato=k;
-        }
-        if (w[k] < 3  && w[k] >= 2.7 && (p[k]!=0 || l[k]!=0)) {
-          candidato=k;
-          break;
-        }
-      }
-    } 
-
-    //ya termine busqueda de candidatos y maximo  
-    if (candidato==-1){
-      if (maximo!=-1){
-        candidato=maximo;
-      }else{
-        candidato=0;
-      } 
-    }
-
-    cout << "saco=" << candidato << endl;
-  
-    if (p[candidato]!=0) {
-      if (p[candidato]>=10) { p[i]+=10;p[candidato]-=10; } else { p[i]+=p[candidato]; p[candidato]=0; }
-    } else {
-      if (l[candidato]>=10) { l[i]+=10;l[candidato]-=10; } else { l[i]+=l[candidato]; l[candidato]=0; }
+  if (cand_s ==-1 || cand_p == -1) {
+    for (int j=0;j<i;j++){
+      if (w[j]>max_con_autos && (p[j]+l[j])!=0 && cand_s==-1) {max_con_autos=w[j];cand_s=j;}
+      if (w[j]<min_con_autos && (p[j]+l[j])!=0 && cand_p==-1) {min_con_autos=w[j];cand_p=j;}
     }
   }
 
+  for (int j=0;j<n;j++){
+    cout 
+      <<    "w["<<j<<"]="<< w[j]
+      << "   l["<<j<<"]="<< l[j]
+      << "   p["<<j<<"]="<< p[j]
+      << endl;
+  }
+
+  cout 
+    <<    "min_mayor_3=" << min_mayor_3
+    << "   max_menor_3=" << max_menor_3
+    << "   min_con_autos=" << min_con_autos
+    << "   max_con_autos=" << max_con_autos
+    << "   cand_s=" << cand_s
+    << "   cand_p=" << cand_p
+    << endl;
+
+  if (cand_s ==-1 || cand_p == -1) return; // no hay opciones
+
+  if (w[i] < 3)  { if (p[i]!=0)      { p[cand_p]++;p[i]-=1;} else {l[cand_p]++;l[i]-=1;} }
+  if (w[i] >= 3) { if (p[cand_s]!=0) { p[i]++;p[cand_s]-=1;} else { l[i]++;l[cand_s]-=1;} }
+  //if (w[i] < 3)  { if (p[i]!=0)      { p[cand_p]+=p[i];p[i]=0;} else {l[cand_p]+=l[i];l[i]=0;} }
+  //if (w[i] >= 3) { if (p[cand_s]!=0) { p[i]+=p[cand_s];p[cand_s]=0;} else { l[i]+=l[cand_s];l[cand_s]=0;} }
 
 }
 
