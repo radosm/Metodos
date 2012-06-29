@@ -1,36 +1,44 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <cassert>
+#include <vector>
 #include <math.h>
 #include "matriz.h"
 #include "Coef.h"
+#include "heuristicas.h"
 
 using namespace std;
+
 
 //
 // MAIN
 //
 int main(int argc, char* argv[])
 {
-  if (argc<3) {
-    cerr << "Error, ingrese parametros: archivo_entrada, archivo_salida\n";
+  if (argc<4) {
+    cerr << "Error, ingrese parametros: archivo_entrada, archivo_salida, nro de heurística (1 o 2)\n";
     exit(1);
   }
 
   char *archivo_entrada=argv[1];
   char *archivo_salida=argv[2];
+  int nh=atoi(argv[3]);
 
-  clock_t inicio, fin;
+  assert(nh==1 || nh==2);
+
+  clock_t fin;
+  double segundos;
  
-  inicio=clock();
-
   //
   // Lee datos de entrada
   //
   ifstream f;
+  ofstream f_salida;
   f.open(archivo_entrada);
   assert(f);
 
@@ -40,173 +48,76 @@ int main(int argc, char* argv[])
   assert(n>0 && m0>0 && ml>0 && mp>0);
 
   vector<Coef> k(n);
-  for(int i=0;i<n;i++){
-    f>>k[i];
-  }
+  for(int i=0;i<n;i++){ f>>k[i]; }
   vector<int> l(n);
-  for(int i=0;i<n;i++){
-    f>>l[i];
-    assert(l[i]>=0);
-  }
+  for(int i=0;i<n;i++){ f>>l[i]; assert(l[i]>=0); }
   vector<int> p(n);
-  for(int i=0;i<n;i++){
-    f>>p[i];
-    assert(p[i]>=0);
-  }
+  for(int i=0;i<n;i++){ f>>p[i]; assert(p[i]>=0); }
   f.close();
 
-/*
-  // Muestra datos de entrada
-  cout << "n: "<<n<<" m0: "<<m0<<" ml: "<<ml<<" mp: "<<mp<<endl;
+  // Calcula matriz K
+  Matriz K(n,n);
   for(int i=0;i<n;i++){
-    cout << k[i] << " ";
-  }
-  cout << endl;
-  for(int i=0;i<n;i++){
-    cout << l[i] << " ";
-  }
-  cout << endl;
-  for(int i=0;i<n;i++){
-    cout << p[i] << " ";
-  }
-  cout << endl;
-*/
-
-	
-/*
-	
-  //Para test 10
-  p[7]+=p[8]+p[9];
-  p[8]=0;
-  p[9]=0;
-  l[7]+=l[8]+l[9];
-  l[8]=0;
-  l[9]=0;
-  p[6]-=6;
-  p[7]+=6;
-
-
-*/
-/*
-  //para test3:
-  for (int i=0;i<50;i++){	
-    p[1]--;
-    p[0]++;
-  }
-
-  for (int i=0;i<50;i++){	
-    l[1]--;
-    l[0]++;
-  }
-*/
-
-
-/*
-  // para test 5
-p[3]+=p[4];
-p[3]=0;
-l[3]+=l[4];
-l[3]=0;
-p[1]=0;
-p[2]+=50;
-p[1]-=5;
-p[2]+=5;
-*/
-
-
-  //Para prueba 20
-p[9]+=p[10];
-p[10]=0;
-l[9]+=l[10];
-l[10]=0;
-p[9]+=p[11];
-p[11]=0;
-l[9]+=l[11];
-l[11]=0;
-p[9]+=p[12];
-p[12]=0;
-l[9]+=l[12];
-l[12]=0;
-p[9]+=p[13];
-p[13]=0;
-l[9]+=l[13];
-l[13]=0;
-p[9]+=p[14];
-p[14]=0;
-l[9]+=l[14];
-l[14]=0;
-p[9]+=p[15];
-p[15]=0;
-l[9]+=l[15];
-l[15]=0;
-p[9]+=p[16];
-p[16]=0;
-l[9]+=l[16];
-l[16]=0;
-p[9]+=p[17];
-p[17]=0;
-l[9]+=l[17];
-l[17]=0;
-p[9]+=p[18];
-p[18]=0;
-l[9]+=l[18];
-l[18]=0;
-p[9]+=p[19];
-p[19]=0;
-l[9]+=l[19];
-l[19]=0;
-p[9]+=p[20];
-p[20]=0;
-l[9]+=l[20];
-l[20]=0;
-
-
-  //
-  // Arma matriz MK=inv(M)*K
-  //
-  Matriz MK(n,n);
-
-  for(int i=0;i<n;i++){
-    float div=(m0+l[i]*ml+p[i]*mp); // div es el coeficiente de M (M es diagonal)
-
-    // Dividir cada fila de K por div es equivalente a multiplicarla a izq por inv(M)
+ 
     if (i>0) {
-      MK.sub(i,i-1)=k[i]/div;  
+      K.sub(i,i-1)=k[i];  
     }
     if (i<n-1) {
-      MK.sub(i,i)=(-k[i]-k[i+1])/div;
-      MK.sub(i,i+1)=k[i+1]/div;
+      K.sub(i,i)=(-k[i]-k[i+1]);
+      K.sub(i,i+1)=k[i+1];
     } else {
-      MK.sub(i,i)=-k[i]/div;
+      K.sub(i,i)=-k[i];
     }
   }
 
-  Matriz Qac;
-  Matriz Dant;
-  MK.autoval_autovect(Qac,Dant);
+  bool ok;   // Aca la heurística devuelve si encontro solución o no
+  bool tmax; // Aca la heurística devuelve si terminó por tiempo máximo
 
-/*
-  cout << endl;
+                      // En este vector quedará la configuración de los pisos calculados por la heurística
+  vector< Piso > P;   // P[i].l=cantidad de livianos de piso i
+                      // P[i].p=cantidad de pesados de piso i
 
-  cout << MK << endl;
+  if (nh==1) {
+    // Ejecuta heurística 1
+    cout << "Ejecutando heurística 1" << endl;
+    h1(n,m0,ml,mp,K,l,p,ok,tmax,P);
+    cout << "Fin heurística 1" << endl;
+  } else {
+    // Ejecuta heurística 2
+    cout << "Ejecutando heurística 2" << endl;
+    h2(n,m0,ml,mp,K,l,p,ok,tmax,P);
+    cout << "Fin heurística 2" << endl;
+  }
 
-  cout << Qac << endl;
+  // Cuenta cantidad de movimientos
+  int movs=0;
+  for(int i=0;i<n;i++){
+    if (p[i]<P[i].p) movs+=P[i].p-p[i];
+    if (l[i]<P[i].l) movs+=P[i].l-l[i];
+  }
 
-  cout << Dant << endl;
-*/
-  cout << endl;
+  // Si encontró solución graba salida
+  if (ok) {
+    // Cuenta cantidad de movimientos
+    int movs=0;
+    for(int i=0;i<n;i++){
+      if (p[i]<P[i].p) movs+=P[i].p-p[i];
+      if (l[i]<P[i].l) movs+=P[i].l-l[i];
+    }
 
-  vector<Coef> w(Dant.cantFilas());
-  for (int i=0;i<Dant.cantFilas();i++) w[i]=sqrt(-Dant.sub(i,i));
-  for (int i=0;i<Dant.cantFilas();i++) cout << "lambda[" << i << "]=" << Dant.sub(i,i) << " / w[" << i << "]=" << w[i] << endl;
-  for (int i=0;i<n;i++) cout << "l_fin[" << i << "]=" << l[i] << " / p_fin[" << i << "]=" << p[i] << endl;
-
-
-  fin=clock();
-  double segundos=(double)fin/CLOCKS_PER_SEC;
-
-  cout << endl;
-  cout << "Tiempo ejecucion: " << segundos << " segundos." << endl;
+    f_salida.open(archivo_salida);
+    assert(f_salida);
+    cout << endl;
+    f_salida << n << " " << m0 << " " << ml << " " << mp <<endl;
+    for(int i=0;i<n;i++){ f_salida << setprecision(15) << k[i] << " "; }
+    f_salida << endl;
+    for(int i=0;i<n;i++){ f_salida << P[i].l << " "; }
+    f_salida << endl;
+    for(int i=0;i<n;i++){ f_salida << P[i].p << " "; }
+    f_salida << endl;
+    f_salida.close();
+    cout << "resultado en archivo=" << archivo_salida << " cantidad de movimientos=" << movs << endl;
+  } 
 
   return 0;
 }
