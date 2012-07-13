@@ -49,6 +49,8 @@ plot \
 ,'em.h100_v-10_m2_cr1_fr0.25' using 1:21 title 'pr=20' w lp pt 6 ps 2 \
 
 set autoscale
+unset xrange
+unset yrange
 set logscale y 2
 set output 'kkem2a.png'
 set title "Energía mecánica - h=100 v=0 m=2 cr=0 fr=0"
@@ -69,3 +71,26 @@ plot \
 ,'em.h100_v0_m2_cr0_fr0' using 1:4  title 'pr=3'  w lp pt 6 \
 ,'em.h100_v0_m2_cr0_fr0' using 1:7  title 'pr=6'  w lp pt 7 \
 
+unset logscale y
+set logscale x 2
+set output 'kkem3a.png'
+set title "Energía mecánica - h=100 v=0 m=2 fr=0.5 precisión=52"
+plot \
+ 'em.h100_v0_m2_cr0.6_fr0.5'  using 1:53 title 'cr=0.6' w lp pt 4 \
+,'em.h100_v0_m2_cr1_fr0.5'  using 1:53 title 'cr=1'   w lp pt 5 \
+,'em.h100_v0_m2_cr13_fr0.5' using 1:53 title 'cr=13'  w lp pt 6 \
+
+set output 'kkem3b.png'
+unset logscale x
+set xrange [5.5:10]
+set title "Energía mecánica - h=100 v=0 m=2 fr=0.5 precisión=52"
+plot \
+ 'em.h100_v0_m2_cr0.6_fr0.5'  using 1:53 title 'cr=0.6' w lp pt 4 \
+,'em.h100_v0_m2_cr1_fr0.5'  using 1:53 title 'cr=1'   w lp pt 5 \
+
+set output 'kkem3c.png'
+unset logscale x
+set xrange [66.4:66.56]
+set title "Energía mecánica - h=100 v=0 m=2 fr=0.5 precisión=52"
+plot \
+ 'em.h100_v0_m2_cr13_fr0.5' using 1:53 title 'cr=13'  w lp pt 6 \

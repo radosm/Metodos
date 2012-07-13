@@ -49,8 +49,9 @@ int main(int argc, char* argv[]){
   printf("log pr=%d t1=%10.20f posicion(t1)=%10.20f iter=%d\n",pr,t1.dbl(),posicion(datos,t1).dbl(),iter1);
 
   // Energia mecanica hasta t1
-  incremento=t1.dbl()/10.0;
-  for (int i=1; i<10 ; i++){
+  incremento=t1.dbl()/9.0;
+  printf("emt1 %d %10.20f %10.20f\n",pr, 0.1, energiaMecanica(datos,TFloat(0.1)).dbl());
+  for (int i=1; i<9 ; i++){
     printf("emt1 %d %10.20f %10.20f\n",pr, incremento*i, energiaMecanica(datos,TFloat(incremento*i,pr)).dbl());
   }
   printf("emt1 %d %10.20f %10.20f\n",pr, t1.dbl(), energiaMecanica(datos,t1).dbl());
