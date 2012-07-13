@@ -1,0 +1,26 @@
+awk '
+function abs(n){
+  if (n<0) return -1*n
+  else return n
+}
+
+function er(px,p){
+  return abs((p-px)/p);
+}
+
+{
+  t1[$1]=$2
+  it_t1[$1]=$3
+  hmax[$1]=$4
+  it_hmax[$1]=$5
+  t2[$1]=$6
+  it_t2[$1]=$7
+}
+END {
+  for (i=1;i<53;i++){
+    ert1=100*er(t1[i],t1[52])
+    erhmax=100*er(hmax[i],hmax[52])
+    ert2=100*er(t2[i],t2[52])
+    print i,ert1
+  }
+}'

@@ -1,0 +1,10 @@
+egrep "^em" resultado_newton.h100_v-10_m2_cr1_fr0.25 | ./calcula_em > em.h100_v-10_m2_cr1_fr0.25
+egrep "^em" resultado_newton.h10000_v-10_m2_cr1_fr0.25 | ./calcula_em > em.h10000_v-10_m2_cr1_fr0.25
+egrep "^em" resultado_newton.h100_v1000000_m2_cr0.6_fr1 | ./calcula_em > em.h100_v1000000_m2_cr0.6_fr1
+egrep "^em" resultado_newton.h10000_v1000000_m2_cr13_fr1 | ./calcula_em > em.h10000_v1000000_m2_cr13_fr1
+egrep "^em" resultado_newton.h100_v0_m2_cr0_fr0 | ./calcula_em > em.h100_v0_m2_cr0_fr0
+
+##egrep -v "^em|^log" resultado_newton.h100_v-10_m2_cr1_fr0.25 | ./calcula_error_relativo > err_rel.h100_v-10_m2_cr1_fr0.25
+##egrep -v "^em|^log" resultado_newton.h10000_v-10_m2_cr1_fr0.25 | ./calcula_error_relativo > err_rel.h10000_v-10_m2_cr1_fr0.25
+##egrep -v "^em|^log" resultado_newton.h100_v1000000_m2_cr0.6_fr1 |./calcula_error_relativo > err_rel.h100_v1000000_m2_cr0.6_fr1
+##egrep -v "^em|^log" resultado_newton.h10000_v1000000_m2_cr13_fr1 |./calcula_error_relativo > err_rel.h10000_v1000000_m2_cr13_fr1

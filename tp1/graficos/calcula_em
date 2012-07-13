@@ -1,0 +1,20 @@
+awk '
+BEGIN {i=0;cada=1}
+
+{
+  if (i>=20) i=0
+  if ($2%cada==1 || cada==1 ||  $2==52){
+    e[i"-"$2]=$4
+  }
+  if ($2==52) t[i]=$3
+  i++
+}
+END {
+  for (i=0;i<20;i++){
+    printf("%.4f ",t[i])
+    for (j=1;j<52;j+=cada){
+      printf("%.20f ",e[i"-"j])
+    }
+    printf("%.20f\n",e[i"-52"])
+  }
+}'

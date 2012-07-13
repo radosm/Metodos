@@ -49,8 +49,8 @@ int main(int argc, char* argv[]){
   printf("log pr=%d t1=%10.20f posicion(t1)=%10.20f iter=%d\n",pr,t1.dbl(),posicion(datos,t1).dbl(),iter1);
 
   // Energia mecanica hasta t1
-  incremento=t1.dbl()/200.0;
-  for (int i=0; i<200 ; i++){
+  incremento=t1.dbl()/10.0;
+  for (int i=1; i<10 ; i++){
     printf("emt1 %d %10.20f %10.20f\n",pr, incremento*i, energiaMecanica(datos,TFloat(incremento*i,pr)).dbl());
   }
   printf("emt1 %d %10.20f %10.20f\n",pr, t1.dbl(), energiaMecanica(datos,t1).dbl());
@@ -75,11 +75,11 @@ int main(int argc, char* argv[]){
   printf("log pr=%d t2=%10.20f posicion(t2)=%10.20f iter=%d\n",pr,t2.dbl(),posicion(datos,t2).dbl(),iter3);
 
   // Energia mecanica entre t1 y t2
-  incremento=t2.dbl()/200.0;
-  for (int i=0; i<200 ; i++){
+  incremento=t2.dbl()/10.0;
+  for (int i=1; i<10 ; i++){
     printf("emt2 %d %10.20f %10.20f\n", pr,t1.dbl()+incremento*i, energiaMecanica(datos,TFloat(incremento*i,pr)).dbl());
   }
-  printf("emt2 pr=%d %10.20f %10.20f\n", pr,  (t1+t2).dbl(), energiaMecanica(datos,t2).dbl());
+  printf("emt2 %d %10.20f %10.20f\n", pr,  (t1+t2).dbl(), energiaMecanica(datos,t2).dbl());
 
   // Resultado en una sola linea
   printf("%d %10.20f %d %10.20f %d %10.20f %d\n",pr,t1.dbl(),iter1,h_max.dbl(),iter2,(t1+t2).dbl(),iter3);

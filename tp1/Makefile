@@ -1,6 +1,6 @@
 export LC_ALL=C
 
-CXXFLAGS=
+CXXFLAGS=-O3
 LDFLAGS=
 
 ALL=newton biseccion extra

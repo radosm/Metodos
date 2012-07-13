@@ -10,7 +10,7 @@
 using namespace std;
 
 #define CANT_PRUEBAS 5000    // Cantidad de pruebas por heurística
-#define TMAX 1200             // Tiempo máximo en segundos
+#define TMAX 900             // Tiempo máximo en segundos
 
 //
 // Arma matriz MK=inv(M)*K, devuelve matrices Qac y Dant con autovectores y autovalores
