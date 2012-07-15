@@ -92,7 +92,7 @@ TFloat biseccion(TFloat (*f)(const Datos&,TFloat),const Datos& d,TFloat toleranc
 TFloat newton(TFloat (*f)(const Datos&,TFloat),TFloat (*f1)(const Datos&,TFloat),const Datos& d,TFloat tolerancia,int max_iter, TFloat t, int& iter){
 
   TFloat cero_tf=TFloat(0.0,pr);
-  TFloat tolAbs=TFloat(0.0000000001,pr);
+  TFloat tolAbs=TFloat(0.000001,pr);
   TFloat x0 = t ;
   TFloat x1 = x0 - f(d, x0) / f1(d, x0);  // 1ra iteracion
 
