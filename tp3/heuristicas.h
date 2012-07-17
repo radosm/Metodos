@@ -7,12 +7,6 @@
 
 using namespace std;
 
-struct Piso {
-  int l;
-  int p;
-};
-
-void h1(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p, bool& ok, bool& tmax, vector< Piso >& P);
-void h2(int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int> l, vector<int> p, bool& ok, bool& tmax, vector< Piso >& P);
+void ejecuta_heuristica(int nh,vector<int>& parametros,int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int>& l, vector<int>& p, bool& ok, bool& tmax);
 
 #endif

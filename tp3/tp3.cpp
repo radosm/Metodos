@@ -29,6 +29,11 @@ int main(int argc, char* argv[])
   char *archivo_salida=argv[2];
   int nh=atoi(argv[3]);
 
+  vector<int> parametros;
+  for(int i=4;i<argc;i++){
+    parametros.push_back(atoi(argv[i]));
+  }
+
   assert(nh==1 || nh==2);
 
   clock_t fin;
@@ -55,6 +60,11 @@ int main(int argc, char* argv[])
   for(int i=0;i<n;i++){ f>>p[i]; assert(p[i]>=0); }
   f.close();
 
+  vector<int> l_orig;
+  vector<int> p_orig;
+  l_orig=l;
+  p_orig=p;
+
   // Calcula matriz K
   Matriz K(n,n);
   for(int i=0;i<n;i++){
@@ -73,36 +83,18 @@ int main(int argc, char* argv[])
   bool ok;   // Aca la heurística devuelve si encontro solución o no
   bool tmax; // Aca la heurística devuelve si terminó por tiempo máximo
 
-                      // En este vector quedará la configuración de los pisos calculados por la heurística
-  vector< Piso > P;   // P[i].l=cantidad de livianos de piso i
-                      // P[i].p=cantidad de pesados de piso i
-
-  if (nh==1) {
-    // Ejecuta heurística 1
-    cout << "Ejecutando heurística 1" << endl;
-    h1(n,m0,ml,mp,K,l,p,ok,tmax,P);
-    cout << "Fin heurística 1" << endl;
-  } else {
-    // Ejecuta heurística 2
-    cout << "Ejecutando heurística 2" << endl;
-    h2(n,m0,ml,mp,K,l,p,ok,tmax,P);
-    cout << "Fin heurística 2" << endl;
-  }
-
-  // Cuenta cantidad de movimientos
-  int movs=0;
-  for(int i=0;i<n;i++){
-    if (p[i]<P[i].p) movs+=P[i].p-p[i];
-    if (l[i]<P[i].l) movs+=P[i].l-l[i];
-  }
+  cout << "Ejecutando heurística " << nh << endl;
+  ejecuta_heuristica(nh,parametros,n,m0,ml,mp,K,l,p,ok,tmax);
+  cout << "Fin heurística " << nh << endl;
 
   // Si encontró solución graba salida
   if (ok) {
     // Cuenta cantidad de movimientos
     int movs=0;
+
     for(int i=0;i<n;i++){
-      if (p[i]<P[i].p) movs+=P[i].p-p[i];
-      if (l[i]<P[i].l) movs+=P[i].l-l[i];
+      if (p_orig[i]<p[i]) movs+=p[i]-p_orig[i];
+      if (l_orig[i]<l[i]) movs+=l[i]-l_orig[i];
     }
 
     f_salida.open(archivo_salida);
@@ -111,9 +103,9 @@ int main(int argc, char* argv[])
     f_salida << n << " " << m0 << " " << ml << " " << mp <<endl;
     for(int i=0;i<n;i++){ f_salida << setprecision(15) << k[i] << " "; }
     f_salida << endl;
-    for(int i=0;i<n;i++){ f_salida << P[i].l << " "; }
+    for(int i=0;i<n;i++){ f_salida << l[i] << " "; }
     f_salida << endl;
-    for(int i=0;i<n;i++){ f_salida << P[i].p << " "; }
+    for(int i=0;i<n;i++){ f_salida << p[i] << " "; }
     f_salida << endl;
     f_salida.close();
     cout << "resultado en archivo=" << archivo_salida << " cantidad de movimientos=" << movs << endl;
