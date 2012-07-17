@@ -14,7 +14,6 @@
 
 using namespace std;
 
-
 //
 // MAIN
 //
@@ -36,9 +35,6 @@ int main(int argc, char* argv[])
 
   assert(nh==1 || nh==2);
 
-  clock_t fin;
-  double segundos;
- 
   //
   // Lee datos de entrada
   //
@@ -80,17 +76,19 @@ int main(int argc, char* argv[])
     }
   }
 
-  bool ok;   // Aca la heurística devuelve si encontro solución o no
-  bool tmax; // Aca la heurística devuelve si terminó por tiempo máximo
+  bool ok;         // Aca la heurística devuelve si encontro solución o no
+  bool tmax;       // Aca la heurística devuelve si terminó por tiempo máximo
+  int c;           // Aca la heurística devuelve la cantidad de pruebas ejecutadas
+  double segundos; // Aca la heurística devuelve la cantidad de segundos transcurridos
 
   cout << "Ejecutando heurística " << nh << endl;
-  ejecuta_heuristica(nh,parametros,n,m0,ml,mp,K,l,p,ok,tmax);
+  ejecuta_heuristica(nh,parametros,n,m0,ml,mp,K,l,p,ok,tmax,c,segundos);
   cout << "Fin heurística " << nh << endl;
 
+  int movs=0;
   // Si encontró solución graba salida
   if (ok) {
     // Cuenta cantidad de movimientos
-    int movs=0;
 
     for(int i=0;i<n;i++){
       if (p_orig[i]<p[i]) movs+=p[i]-p_orig[i];
@@ -110,6 +108,13 @@ int main(int argc, char* argv[])
     f_salida.close();
     cout << "resultado en archivo=" << archivo_salida << " cantidad de movimientos=" << movs << endl;
   } 
+
+
+  cout << "LOG ";
+  for(int i=1;i<argc;i++){
+    cout << argv[i] << " ";
+  }
+  cout << ok << " " << movs << " " << tmax << " " << c << " " << segundos << endl;
 
   return 0;
 }

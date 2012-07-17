@@ -9,13 +9,14 @@
 
 using namespace std;
 
-#define CANT_PRUEBAS 5000    // Cantidad de pruebas por heurística
-#define TMAX 900             // Tiempo máximo en segundos
+#define TMAX 180 // Tiempo máximo de ejecución de una heurística en segundos
 
 //
 // Arma matriz MK=inv(M)*K, devuelve matrices Qac y Dant con autovectores y autovalores
 //
-void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector<int>& l, vector<int>& p, Matriz& Qac, Matriz& Dant){
+void calculo_av_prueba(
+  int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector<int>& l, vector<int>& p, Matriz& Qac, Matriz& Dant
+){
   Matriz MK(n,n);
   for(int i=0;i<n;i++){
     float div=m0+l[i]*ml+p[i]*mp; // div es el coeficiente de M (M es diagonal)
@@ -36,7 +37,13 @@ void calculo_av_prueba(int n,Coef m0, Coef ml, Coef mp, Matriz &K, vector<int>& 
 }
 
 
-void prueba_h1(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
+//
+// Heurística 1: saca al azar de un piso y pone en otro
+//
+void h1(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
+
+  assert(parametros.size()==2);
+  
   // Elige dos pisos
   int ps=rand()%n;
   int pp=rand()%n; 
@@ -47,8 +54,6 @@ void prueba_h1(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
   int maxl=RAND_MAX;
   int maxp=RAND_MAX;
 
-  assert(parametros.size()==2);
-  
   if (parametros[0]>=0) maxl=parametros[0];
   if (parametros[1]>=0) maxp=parametros[1];
 
@@ -61,10 +66,20 @@ void prueba_h1(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
   p[pp]+=cp;
 }
 
-void prueba_h2(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
-  int m,v;
+//
+// Heurística 2: ubica los livianos en el último piso y los pesados en el primero,
+//               y va bajando los livianos y subiendo los pesados
+//
+// Parámetros: 0 => porcion de livianos que baja (1=todos, 2=mitad, etc ... )
+//             1 => porcion de pesados que sube (1=todos, 2=mitad, etc ... )
+//
+// Para ambos parámetros cuando hace la división usa la parte entera inferior
+//
+void h2(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
 
   assert(parametros.size()==2);
+
+  int m,v;
 
   int c=parametros[0];
   int d=parametros[1];
@@ -90,10 +105,28 @@ void prueba_h2(vector<int>& parametros,int n,vector<int>& l, vector<int>& p){
 }
 
 
-void ejecuta_heuristica(int nh,vector<int>& parametros, int n,Coef m0, Coef ml, Coef mp, Matriz& K, vector<int>& l, vector<int>& p, bool& ok, bool& tmax){
+//
+// Llama a la heurística correcta y hace los chequeos de éxito o no
+// Corta cuando se alcanzó el tiempo máximo o la heurística no tiene 
+// más combinaciones para intentar
+//
+void ejecuta_heuristica(
+   int nh
+  ,vector<int>& parametros
+  ,int n
+  ,Coef m0
+  ,Coef ml
+  ,Coef mp
+  ,Matriz& K
+  ,vector<int>& l
+  ,vector<int>& p
+  ,bool& ok
+  ,bool& tmax
+  ,int& c
+  ,double& segundos
+){
   vector<Coef> w(n); // Acá quedarán las frecuencias
   clock_t inicio,fin;
-  double segundos;
   Matriz Qac;
   Matriz Dant;
 
@@ -101,7 +134,8 @@ void ejecuta_heuristica(int nh,vector<int>& parametros, int n,Coef m0, Coef ml, 
   int cantl=0;
   int cantp=0;
   int v,m;
-  int c=1;
+
+  c=1;
 
   if (nh==1){
     assert(parametros.size()==2);
@@ -146,10 +180,10 @@ void ejecuta_heuristica(int nh,vector<int>& parametros, int n,Coef m0, Coef ml, 
       break;
     }
     if (nh==1){
-      prueba_h1(parametros,n,l,p);
+      h1(parametros,n,l,p);
     } else {
       if ((l[0]==cantl || parametros[0]==0) && (p[n-1]==cantp || parametros[1]==0)) break;
-      prueba_h2(parametros,n,l,p);
+      h2(parametros,n,l,p);
     }
     c++;
   }
